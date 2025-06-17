@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import {useState} from "react";
 
 function RegisterForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [email,setEmail] = useState("");
     const [message, setMessage] = useState("");
 
     const handleRegister = async (e) => {
@@ -15,8 +16,9 @@ function RegisterForm() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    email,
                     username,
-                    password,
+                    password
                 }),
             });
 
@@ -24,6 +26,7 @@ function RegisterForm() {
                 setMessage("회원가입 성공!");
                 setUsername("");
                 setPassword("");
+                setEmail("");
             } else {
                 const data = await response.text();
                 setMessage(`회원가입 실패: ${data}`);
@@ -37,6 +40,22 @@ function RegisterForm() {
         <div>
             <h2>회원가입</h2>
             <form onSubmit={handleRegister}>
+                <input
+                    type="text"
+                    placeholder="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <br />
+                <input
+                    type="text"
+                    placeholder="아이디"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+                <br />
                 <input
                     type="password"
                     placeholder="비밀번호"
