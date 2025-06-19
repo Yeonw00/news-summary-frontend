@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -22,8 +24,7 @@ function LoginForm() {
             });
 
             if(response.ok) {
-                setMessage("로그인 성공!");
-                // TODO: 홈으로 이동하거나 사용자 상태 저장 등 처리
+                navigate("/summary");
             } else {
                 const data = await response.text();
                 setMessage(`로그인 실패: ${data}`);

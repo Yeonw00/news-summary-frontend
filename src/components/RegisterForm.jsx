@@ -16,8 +16,8 @@ function RegisterForm() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    email,
                     username,
+                    email,
                     password
                 }),
             });

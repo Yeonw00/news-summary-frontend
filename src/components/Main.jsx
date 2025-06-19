@@ -1,13 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import "../.css";
 
 function Main() {
     const navigate = useNavigate();
 
     return (
-        <div>
-            <h1>Welcome!</h1>
-            <button onClick={() => navigate("/login")}>Login</button>
-            <button onClick={() => navigate("/signup")}>Signup</button>
+        <div className="main">
+            <h1>News Summary</h1>
+            <h3>Welcome!</h3>
+            <div className="button-group">
+                <button className="main-button" onClick={() => navigate("/login")}>Login</button>
+                <button className="main-button" onClick={() => navigate("/signup")}>Signup</button>
+            </div>
         </div>
     );
 }
