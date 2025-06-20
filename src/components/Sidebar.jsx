@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import "../.css";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
+    const { setIsLoggedIn } = useAuth();
+
+    const handleLogout = () =>  {
+        setIsLoggedIn(false);
+    };
+
     return(
         <div className="sidebar">
             <nav>

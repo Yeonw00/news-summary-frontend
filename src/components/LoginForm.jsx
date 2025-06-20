@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function LoginForm() {
+    const { setIsLoggedIn } = useAuth();
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
-    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,6 +26,7 @@ function LoginForm() {
             });
 
             if(response.ok) {
+                setIsLoggedIn(true);
                 navigate("/summary");
             } else {
                 const data = await response.text();
