@@ -9,15 +9,25 @@ function SummaryForm() {
       const handleSubmit = async () => {
         setLoading(true);
         setSummary('');
-    
-        const body = url ? {url} : {content};
+
+        const meResponse = await fetch("http://localhost:8080/api/auth/me", {
+            method: "GET",
+            credentials: "include", // 세션 쿠키 포함 필수
+            });
+
+            const meText = await meResponse.text();
+            console.log(meText);
+
     
         const response = await fetch('http://localhost:8080/api/summary/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify({
+                    originalUrl: url,
+                    originalContent: content
+                }),
         });
     
         const text = await response.text();
