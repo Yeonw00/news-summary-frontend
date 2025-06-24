@@ -1,6 +1,8 @@
-import {useState} from "react";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 function SummaryForm() {
+      const {currentUser, login, logout} = useAuth();
       const [url, setUrl] = useState('');
       const [content, setContent] = useState('');
       const [summary, setSummary] = useState('');
@@ -10,15 +12,6 @@ function SummaryForm() {
         setLoading(true);
         setSummary('');
 
-        const meResponse = await fetch("http://localhost:8080/api/auth/me", {
-            method: "GET",
-            credentials: "include", // 세션 쿠키 포함 필수
-            });
-
-            const meText = await meResponse.text();
-            console.log(meText);
-
-    
         const response = await fetch('http://localhost:8080/api/summary/openai', {
           method: 'POST',
           headers: {

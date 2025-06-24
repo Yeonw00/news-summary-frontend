@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import "../.css";
-// import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
-    // const { setIsLoggedIn } = useAuth();
+    const { setIsLoggedIn, currentUser, login, logout } = useAuth();
 
-    // const handleLogout = () =>  {
-    //     setIsLoggedIn(false);
-    // };
+    const handleLogout = () =>  {
+        setIsLoggedIn(false);
+    };
 
     return(
         <div className="sidebar">
