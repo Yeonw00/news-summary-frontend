@@ -7,22 +7,16 @@ export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/auth/me", {
-            credentials: "include",
-        })
-            .then((res) => {
-                if(res.ok) return res.text();
-                throw new Error("Not authenticated");
-            })
-            .then((username) => setCurrentUser(username))
-            .catch(() => setCurrentUser(null))
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+            const parsed = JSON.parse(savedUser);
+            setCurrentUser(parsed.username);
+            setIsLoggedIn(true);
+        }
     }, []);
 
-    const login = (username) => setCurrentUser(username);
-    const logout = () => setCurrentUser(null);
-
     return (
-        <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn, login, logout, currentUser}}>
+        <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser}}>
             {children}
         </AuthContext.Provider>
     );

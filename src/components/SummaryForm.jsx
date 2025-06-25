@@ -2,14 +2,11 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 function SummaryForm() {
-      const {currentUser, login, logout} = useAuth();
       const [url, setUrl] = useState('');
       const [content, setContent] = useState('');
       const [summary, setSummary] = useState('');
-      const [loading, setLoading] = useState('');
-    
+
       const handleSubmit = async () => {
-        setLoading(true);
         setSummary('');
 
         const response = await fetch('http://localhost:8080/api/summary/openai', {
@@ -17,6 +14,7 @@ function SummaryForm() {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: "include",
           body: JSON.stringify({
                     originalUrl: url,
                     originalContent: content
@@ -25,7 +23,6 @@ function SummaryForm() {
     
         const text = await response.text();
         setSummary(text);
-        setLoading(false);
       };
     return (
         <div style={{ maxWidth: 800, margin: 'auto', padding: 20}}>
@@ -56,8 +53,8 @@ function SummaryForm() {
                 />
             </div>
 
-            <button onClick={handleSubmit} disabled={loading}>
-                {loading ? '요약 중...' : '요약 요청'}
+            <button onClick={handleSubmit} >
+                Go
             </button>
 
             {summary && (

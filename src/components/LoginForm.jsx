@@ -26,6 +26,7 @@ function LoginForm() {
             });
 
             if(response.ok) {
+                localStorage.setItem("user", JSON.stringify({ username: response.username }))
                 setIsLoggedIn(true);
                 navigate("/summary");
             } else {
