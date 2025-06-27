@@ -3,13 +3,46 @@ html, body {
   margin: 0;
 }
 
-.sidebar {
-  width: 200px;
+.app-container {
+  display:flex;
   height: 100vh;
-  position: fixed;
-  background-color: #f0f0f0;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.main-content {
+  flex: 1;
+  display:flex;
+  justify-content: center;
+  align-items: start;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.sidebar {
+  width: 250px;
+  transition: width 0.3s ease;
+  height: 100vh;
+  position: relative;
+  background-color: #f2f2f2;
+  padding: 10px;
+  box-shadow: 2px 10px rgba(0,0,0,0.1);
+}
+
+.sidebar.closed {
+  width: 50px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.toggle-btn {
+  position:absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ccc;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 }
 
 .sidebar ul {
@@ -54,4 +87,45 @@ html, body {
 
 .main-button:hover {
   background-color: #38c957;
+}
+
+.summary-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.summary-title {
+  margin-bottom: 15px;
+}
+
+.summary-group {
+  margin-bottom: 20px;
+}
+
+.summary-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.summary-input,
+.summary-textarea {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.summary-textarea {
+  resize: vertical;
+}
+
+.summary-button {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.summary-result {
+  margin-top: 30px;
 }

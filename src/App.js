@@ -11,15 +11,23 @@ function Layout() {
   const { isLoggedIn } = useAuth();
 
   return(
-    <>
+    <div className="app-container">
       {isLoggedIn && <Sidebar />}
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/signup" element={<RegisterForm />}/>
-        <Route path="/login" element={<LoginForm />}/>
-        <Route path="/summary" element={<SummaryForm />} />
-      </Routes>
-    </>
+      <div className="main-content">
+        <Routes>
+          <Route
+          path="/" element={
+            isLoggedIn ? <SummaryForm /> : <Main /> } 
+          />
+          <Route path="/signup" element={<RegisterForm />}/>
+          <Route path="/login" element={<LoginForm />}/>
+          <Route 
+            path="/summary" element={
+              isLoggedIn ? <SummaryForm /> : <Main /> }
+          />
+        </Routes>
+      </div>
+    </div>
   );
 }
 

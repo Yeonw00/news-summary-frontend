@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import "../.css";
 
 function SummaryForm() {
       const [url, setUrl] = useState('');
@@ -25,10 +25,10 @@ function SummaryForm() {
         setSummary(text);
       };
     return (
-        <div style={{ maxWidth: 800, margin: 'auto', padding: 20}}>
-            <h1>뉴스 요약기</h1>
-            <div>
-                <label>URL:</label>
+        <div className="summary-container">
+            <h1 className="summary-title">뉴스 요약기</h1>
+            <div className="summary-group">
+                <label className="summary-label">URL:</label>
                 <input
                     type="text"
                     value={url}
@@ -40,8 +40,8 @@ function SummaryForm() {
                 />
             </div>
 
-            <div>
-                <label>기사 본문:</label>
+            <div className="summary-group">
+                <label className="summary-label">기사 본문:</label>
                 <textarea
                     rows="6"
                     value={content}
@@ -53,12 +53,12 @@ function SummaryForm() {
                 />
             </div>
 
-            <button onClick={handleSubmit} >
+            <button onClick={handleSubmit} className="summary-button" >
                 Go
             </button>
 
             {summary && (
-            <div style={{ marginTop: 20 }}>
+            <div className="summary-result">
                 <h3>요약 결과:</h3>
                 <p>{summary}</p>
             </div>
