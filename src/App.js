@@ -2,9 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
 import SummaryForm from "./components/SummaryForm";
-import Main from "./components/Main";
+import Home from "./components/Home";
 import Sidebar from "./components/Sidebar";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import SummaryDetail from "./components/SummaryDetail";
 
 
 function Layout() {
@@ -13,18 +14,19 @@ function Layout() {
   return(
     <div className="app-container">
       {isLoggedIn && <Sidebar />}
-      <div className="main-content">
+      <div className="app-content">
         <Routes>
           <Route
           path="/" element={
-            isLoggedIn ? <SummaryForm /> : <Main /> } 
+            isLoggedIn ? <SummaryForm /> : <Home /> } 
           />
           <Route path="/signup" element={<RegisterForm />}/>
           <Route path="/login" element={<LoginForm />}/>
           <Route 
             path="/summary" element={
-              isLoggedIn ? <SummaryForm /> : <Main /> }
+              isLoggedIn ? <SummaryForm /> : <Home /> }
           />
+          <Route path="/summary/:requestId" element={<SummaryDetail />}/>
         </Routes>
       </div>
     </div>

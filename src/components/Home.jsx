@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import "../.css";
 
-function Main() {
+function Home() {
     const navigate = useNavigate();
 
     return (
-        <div className="main">
+        <div className="home">
             <h1>News Summary</h1>
             <h3>Welcome!</h3>
             <div className="button-group">
-                <button className="main-button" onClick={() => navigate("/login")}>Login</button>
-                <button className="main-button" onClick={() => navigate("/signup")}>Signup</button>
+                <button className="home-button" onClick={() => navigate("/login")}>Login</button>
+                <button className="home-button" onClick={() => navigate("/signup")}>Signup</button>
             </div>
         </div>
     );
 }
 
-export default Main;
+export default Home;

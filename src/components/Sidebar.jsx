@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../.css";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
@@ -7,6 +7,8 @@ function Sidebar({ onSelect }) {
     const [summaries, setSummaries] = useState([]);
     const [isOpen, setIsOpen] = useState(true);
     const { isLoggedIn } = useAuth();
+
+    const navigate = useNavigate();
 
     // const handleLogout = () =>  {
     //     setIsLoggedIn(false);
@@ -33,20 +35,23 @@ function Sidebar({ onSelect }) {
             <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
                 {isOpen ? "←" : "→"}
             </button>
-            {isOpen && (
-                <>
-                <nav>
-                    <ul>
-                        <li><Link to="/summary">새 요약</Link></li>
-                    </ul>
-                </nav>
-                {summaries.map((item) => (
-                    <div key={item.id} className="summary-title" onClick={() => onSelect(item.id)}>
-                        {item.title}
-                    </div>
-                ))}
-                </>
-            )}
+            <div className="sidebar-body">
+                {isOpen && (
+                    <>
+                    <nav>
+                        <ul>
+                            <li><Link to="/summary">새 요약</Link></li>
+                        </ul>
+                    </nav>
+                    <br />
+                    {summaries.map((item) => (
+                        <div key={item.id} className="summary-title" onClick={() => navigate(`/summary/${item.id}`)}>
+                            {item.origianlContent}
+                        </div>
+                    ))}
+                    </>
+                )}
+            </div>
         </div>
     );
 }

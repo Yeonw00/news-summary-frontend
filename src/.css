@@ -8,7 +8,7 @@ html, body {
   height: 100vh;
 }
 
-.main-content {
+.app-content {
   flex: 1;
   display:flex;
   justify-content: center;
@@ -25,6 +25,12 @@ html, body {
   background-color: #f2f2f2;
   padding: 10px;
   box-shadow: 2px 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 10px;
 }
 
 .sidebar.closed {
@@ -59,7 +65,7 @@ html, body {
   color: #333;
 }
 
-.main {
+.home {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -74,7 +80,7 @@ html, body {
   gap: 10px;
 }
 
-.main-button {
+.home-button {
   background-color: #44fe6c;
   color: white;
   border: none;
@@ -85,7 +91,7 @@ html, body {
   transition: background-color 0.3s ease;
 }
 
-.main-button:hover {
+.home-button:hover {
   background-color: #38c957;
 }
 
@@ -98,6 +104,14 @@ html, body {
 
 .summary-title {
   margin-bottom: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.summary-title:hover {
+  background-color:  #d4d2d2;
 }
 
 .summary-group {
