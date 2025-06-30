@@ -31,6 +31,10 @@ html, body {
   flex: 1;
   overflow-y: auto;
   margin-top: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: visible;     /* ✅ 메뉴가 잘리지 않게 하기 */
+  position: relative;    /* ✅ absolute 위치 기준을 잡기 위해 필요 */
 }
 
 .sidebar.closed {
@@ -102,16 +106,28 @@ html, body {
   padding: 40px 20px;
 }
 
-.summary-title {
-  margin-bottom: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  position: relative;
   cursor: pointer;
 }
 
-.summary-title:hover {
+.summary-item:hover {
   background-color:  #d4d2d2;
+}
+
+.summary-item:hover .menu-button {
+  display: block;
+}
+
+.summary-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
 }
 
 .summary-group {
@@ -142,4 +158,34 @@ html, body {
 
 .summary-result {
   margin-top: 30px;
+}
+
+.menu-button {
+  display: none;
+  position: relative;
+  padding-left: 6px;
+  color: #000000;
+  font-size: 28px;
+  margin-left: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.action-menu {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.action-menu div {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.action-menu div:hover {
+  background-color: #f2f2f2;
 }

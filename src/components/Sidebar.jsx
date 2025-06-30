@@ -7,6 +7,9 @@ function Sidebar({ onSelect }) {
     const [summaries, setSummaries] = useState([]);
     const [isOpen, setIsOpen] = useState(true);
     const { isLoggedIn } = useAuth();
+    const [openMenuId, setOpenMenuId] = useState(null);
+    const [editingId, setEditingId] = useState(null); 
+    const [editTitle, setEditTitle] = useState("");
 
     const navigate = useNavigate();
 
@@ -28,7 +31,28 @@ function Sidebar({ onSelect }) {
             .catch((err) => {
                 console.error(err);
             })
-    }, [isLoggedIn])
+    }, [isLoggedIn]);
+
+    const handleMenuToggle = (id, e) => {
+        e.stopPropagation();
+        setOpenMenuId(openMenuId === id ? null : id);
+    };
+
+    const handleTitleChange = async (id) => {
+        if (editTitle.trim() === "") return;
+
+        await fetch(`http://localhost:8080/api/summary/${id}/title`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({ title: editTitle })
+        });
+
+        setSummaries((prev) => prev.map((item) => item.id === id ? { ...item, title: editTitle} : item));
+        setEditingId(null);
+    };
 
     return(
         <div className={`sidebar ${isOpen ? "open": "closed"}`}>
@@ -37,19 +61,59 @@ function Sidebar({ onSelect }) {
             </button>
             <div className="sidebar-body">
                 {isOpen && (
-                    <>
+                    <div>
                     <nav>
                         <ul>
                             <li><Link to="/summary">새 요약</Link></li>
                         </ul>
                     </nav>
                     <br />
-                    {summaries.map((item) => (
-                        <div key={item.id} className="summary-title" onClick={() => navigate(`/summary/${item.id}`)}>
-                            {item.origianlContent}
+                        <div className="summary-list">
+                            {summaries.map((item) => (
+                                <div key={item.id} className="summary-item">
+                                    {editingId === item.id ? (
+                                        <input
+                                          autoFocus
+                                          value={editTitle}
+                                          onChange={(e) => setEditTitle(e.target.value)}
+                                          onBlur={() => handleTitleChange(item.id)}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter") handleTitleChange(item.id);
+                                          }}
+                                        />
+                                        ): (
+                                        <span 
+                                        className="summary-title"
+                                        onClick={() => navigate(`/summary/${item.id}`)}
+                                        >
+                                            {item.title ? item.title : item.originalContent}
+                                        </span>
+                                     )}
+                                     
+                                <div 
+                                    className="menu-button"
+                                    onClick={(e) => handleMenuToggle(item.id, e)}
+                                >
+                                    ⋯
+                                    {openMenuId === item.id && (
+                                        <div className="action-menu">
+                                            <div
+                                             onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingId(item.id);
+                                                setEditTitle("");
+                                             }}
+                                            >
+                                            수정
+                                            </div>
+                                            <div onClick={() => alert("삭제 기능")}>삭제</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            ))}
                         </div>
-                    ))}
-                    </>
+                    </div>
                 )}
             </div>
         </div>
