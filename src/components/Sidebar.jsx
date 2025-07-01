@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../.css";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
+import SummaryItem from "./SummaryItem";
 
 function Sidebar({ onSelect }) {
     const [summaries, setSummaries] = useState([]);
@@ -33,13 +34,8 @@ function Sidebar({ onSelect }) {
             })
     }, [isLoggedIn]);
 
-    const handleMenuToggle = (id, e) => {
-        e.stopPropagation();
-        setOpenMenuId(openMenuId === id ? null : id);
-    };
-
-    const handleTitleChange = async (id) => {
-        if (editTitle.trim() === "") return;
+    const updateTitle = async (id, newTitle) => {
+        if (newTitle.trim() === "") return;
 
         await fetch(`http://localhost:8080/api/summary/${id}/title`, {
             method: "PATCH",
@@ -47,11 +43,23 @@ function Sidebar({ onSelect }) {
                 "Content-Type": "application/json"
             },
             credentials: "include",
-            body: JSON.stringify({ title: editTitle })
+            body: JSON.stringify({ title: newTitle})
         });
 
-        setSummaries((prev) => prev.map((item) => item.id === id ? { ...item, title: editTitle} : item));
         setEditingId(null);
+        setSummaries((prev) => 
+            prev.map((item) => (item.id === id ? {...item, title: newTitle} : item))
+        );
+    };
+
+    const deleteSummary = async (id) => {
+        await fetch(`http://localhost:8080/api/summary/delete/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        setEditingId(null);
+        setSummaries((prev) => prev.filter((item) => item.id !== id));
     };
 
     return(
@@ -70,47 +78,19 @@ function Sidebar({ onSelect }) {
                     <br />
                         <div className="summary-list">
                             {summaries.map((item) => (
-                                <div key={item.id} className="summary-item">
-                                    {editingId === item.id ? (
-                                        <input
-                                          autoFocus
-                                          value={editTitle}
-                                          onChange={(e) => setEditTitle(e.target.value)}
-                                          onBlur={() => handleTitleChange(item.id)}
-                                          onKeyDown={(e) => {
-                                            if (e.key === "Enter") handleTitleChange(item.id);
-                                          }}
-                                        />
-                                        ): (
-                                        <span 
-                                        className="summary-title"
-                                        onClick={() => navigate(`/summary/${item.id}`)}
-                                        >
-                                            {item.title ? item.title : item.originalContent}
-                                        </span>
-                                     )}
-                                     
-                                <div 
-                                    className="menu-button"
-                                    onClick={(e) => handleMenuToggle(item.id, e)}
-                                >
-                                    ⋯
-                                    {openMenuId === item.id && (
-                                        <div className="action-menu">
-                                            <div
-                                             onClick={(e) => {
-                                                e.stopPropagation();
-                                                setEditingId(item.id);
-                                                setEditTitle("");
-                                             }}
-                                            >
-                                            수정
-                                            </div>
-                                            <div onClick={() => alert("삭제 기능")}>삭제</div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                                <SummaryItem
+                                    key={item.id}
+                                    item={item}
+                                    editingId={editingId}
+                                    setEditingId={setEditingId}
+                                    editTitle={editTitle}
+                                    setEditTitle={setEditTitle}
+                                    navigate={navigate}
+                                    deleteSummary={deleteSummary}
+                                    updateTitle={updateTitle}
+                                    openMenuId={openMenuId}
+                                    setOpenMenuId={setOpenMenuId}
+                                />
                             ))}
                         </div>
                     </div>
