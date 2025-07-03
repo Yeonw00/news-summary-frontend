@@ -38,9 +38,9 @@ function RegisterForm() {
     };
 
     return (
-        <div>
+        <div className="form-container">
             <h2>회원가입</h2>
-            <form onSubmit={handleRegister}>
+            <form className="form-title" onSubmit={handleRegister}>
                 <input
                     type="text"
                     placeholder="email"
@@ -65,7 +65,7 @@ function RegisterForm() {
                     required
                 />
                 <br />
-                <button type="submit">회원가입</button>
+                <button className="form-button" type="submit">회원가입</button>
             </form>
             <p>{message}</p>
         </div>

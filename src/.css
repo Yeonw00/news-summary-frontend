@@ -189,3 +189,48 @@ html, body {
 .action-menu div:hover {
   background-color: #f2f2f2;
 }
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: center;
+}
+
+.form-container h2 {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  font-weight: bold;
+}
+
+.form-title {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 250px;
+}
+
+.form-title input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.form-button {
+  padding: 10px;
+  background-color: #44fe6c;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: backgroud-color 0.2s ease;
+}
+
+.form-button:hover {
+  background-color: #38c957;
+}

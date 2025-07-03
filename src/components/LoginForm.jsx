@@ -39,9 +39,9 @@ function LoginForm() {
     };
 
     return (
-        <div>
+        <div className="form-container">
             <h2>로그인</h2>
-            <form onSubmit={handleLogin}>
+            <form className="form-title" onSubmit={handleLogin}>
                 <input
                     type="text"
                     placeholder="아이디"
@@ -58,7 +58,7 @@ function LoginForm() {
                     required
                 />
                 <br />
-                <button type="submit">로그인</button>
+                <button className="form-button" type="submit">로그인</button>
             </form>
             <p>{message}</p>
         </div>
