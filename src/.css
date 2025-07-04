@@ -5,7 +5,7 @@ html, body {
 
 .app-container {
   display:flex;
-  height: 100vh;
+  flex: 1;
 }
 
 .app-content {
@@ -233,4 +233,45 @@ html, body {
 
 .form-button:hover {
   background-color: #38c957;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.nav-buttons button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  background-color: #44fe6c;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-buttons button:hover {
+  background-color: #38c957;
+}
+
+.nav-buttons a {
+  text-decoration: none;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
