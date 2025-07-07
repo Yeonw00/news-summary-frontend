@@ -14,10 +14,10 @@ function Layout() {
 
   return(
     <div className="page-wrapper">
-      {isLoggedIn && <Header />}
       <div className="app-container">
         {isLoggedIn && <Sidebar />}
-        <div className="app-content">
+        <div className="main-section">
+          {isLoggedIn && <Header />}
           <Routes>
             <Route
             path="/" element={

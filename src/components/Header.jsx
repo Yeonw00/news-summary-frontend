@@ -6,8 +6,11 @@ function Header() {
     const { isLoggedIn, setIsLoggedIn } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        const res = fetch('http://localhost:8080/api/auth/logout', {
+    const handleLogout = async() => {
+        const confirmLogout = window.confirm("정말 로그아웃 하시겠습니까?");
+        if (!confirmLogout) return;
+
+        const res = await fetch('http://localhost:8080/api/auth/logout', {
             method: "POST",
             credentials: "include"
         })
