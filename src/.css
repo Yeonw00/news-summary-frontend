@@ -258,7 +258,7 @@ html, body, #root {
   justify-content: space-between;
   align-items: center;
   padding: 3px 10px;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #f3f0f0;
   margin-bottom: 20px;
   margin-top: 0;
 }
@@ -273,6 +273,7 @@ html, body, #root {
 
 .nav-buttons button {
   margin-left: 10px;
+  margin-bottom: 5px;
   padding: 8px 12px;
   background-color: #44fe6c;
   color: white;
@@ -289,6 +290,12 @@ html, body, #root {
 
 .nav-buttons a {
   text-decoration: none;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .page-wrapper {

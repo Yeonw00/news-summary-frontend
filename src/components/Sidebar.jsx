@@ -70,9 +70,10 @@ function Sidebar({ onSelect }) {
             <div className="sidebar-body">
                 {isOpen && (
                     <div>
+                    <br />
                     <nav>
                         <ul>
-                            <li><Link to="/summary">새 요약</Link></li>
+                            <li ><Link to="/summary">새 요약</Link></li>
                         </ul>
                     </nav>
                     <br />
