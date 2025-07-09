@@ -63,41 +63,50 @@ function Sidebar({ onSelect }) {
     };
 
     return(
-        <div className={`sidebar ${isOpen ? "open": "closed"}`}>
-            <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
+        <>
+            <div className={`sidebar ${isOpen ? "open": "closed"}`}>
+                <div className="sidebar-body">
+                    {isOpen && (
+                        <div>
+                        <br />
+                        <nav>
+                            <ul>
+                                <li ><Link to="/summary">새 요약</Link></li>
+                            </ul>
+                        </nav>
+                        <br />
+                            <div className="summary-list">
+                                {summaries.map((item) => (
+                                    <SummaryItem
+                                        key={item.id}
+                                        item={item}
+                                        editingId={editingId}
+                                        setEditingId={setEditingId}
+                                        editTitle={editTitle}
+                                        setEditTitle={setEditTitle}
+                                        navigate={navigate}
+                                        deleteSummary={deleteSummary}
+                                        updateTitle={updateTitle}
+                                        openMenuId={openMenuId}
+                                        setOpenMenuId={setOpenMenuId}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <button className="toggle-btn" 
+                onClick={() => setIsOpen(!isOpen)} 
+                style={{
+                    left: isOpen ? "210px" : "10px",
+                    top: "10px",
+                }}
+            >
                 {isOpen ? "←" : "→"}
             </button>
-            <div className="sidebar-body">
-                {isOpen && (
-                    <div>
-                    <br />
-                    <nav>
-                        <ul>
-                            <li ><Link to="/summary">새 요약</Link></li>
-                        </ul>
-                    </nav>
-                    <br />
-                        <div className="summary-list">
-                            {summaries.map((item) => (
-                                <SummaryItem
-                                    key={item.id}
-                                    item={item}
-                                    editingId={editingId}
-                                    setEditingId={setEditingId}
-                                    editTitle={editTitle}
-                                    setEditTitle={setEditTitle}
-                                    navigate={navigate}
-                                    deleteSummary={deleteSummary}
-                                    updateTitle={updateTitle}
-                                    openMenuId={openMenuId}
-                                    setOpenMenuId={setOpenMenuId}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+        </>
     );
 }
 

@@ -27,8 +27,9 @@ function SummaryForm() {
     return (
         <div className="summary-container">
             <h1 className="summary-title">뉴스 요약기</h1>
+            <br />
             <div className="summary-group">
-                <label className="summary-label">URL:</label>
+                <label className="summary-label">URL</label>
                 <input
                     type="text"
                     value={url}
@@ -41,7 +42,7 @@ function SummaryForm() {
             </div>
 
             <div className="summary-group">
-                <label className="summary-label">기사 본문:</label>
+                <label className="summary-label">기사 본문</label>
                 <textarea
                     rows="6"
                     value={content}
@@ -53,7 +54,7 @@ function SummaryForm() {
                 />
             </div>
 
-            <button onClick={handleSubmit} className="summary-button" >
+            <button className="summary-button" onClick={handleSubmit}>
                 Go
             </button>
 

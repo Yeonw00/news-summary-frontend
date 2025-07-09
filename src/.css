@@ -41,21 +41,25 @@ html, body, #root {
 }
 
 .sidebar.closed {
-  width: 50px;
-  overflow: hidden;
-  background-color: white;
+  width: 50px !important;
+  min-width: 0 !important;
+  background-color: #f2f2f2;
+  border-right: 1px solid #ddd;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width 0.3s ease;
 }
 
 .toggle-btn {
-  position:absolute;
-  top: 10px;
-  right: 10px;
+  position: fixed;         /* 화면 고정 */
+  z-index: 2000;           /* 어떤 요소보다 위에 오도록 */
   background-color: #ccc;
   border: none;
   border-radius: 50%;
   width: 30px;
   height: 30px;
   cursor: pointer;
+  transition: left 0.3s ease;
 }
 
 .sidebar ul {
@@ -161,6 +165,10 @@ html, body, #root {
 .summary-button {
   padding: 10px 20px;
   cursor: pointer;
+  background-color: #c2bfbf;
+  border: none;
+  border-radius: 5%;
+  color: rgb(45, 44, 44);
 }
 
 .summary-result {
@@ -248,7 +256,6 @@ html, body, #root {
   flex-direction: column;
   padding: 24px;
   overflow-y: auto;
-  overflow-x: hidden;
   background-color: white;
 }
 
@@ -271,35 +278,65 @@ html, body, #root {
   padding: 0;
 }
 
-.nav-buttons button {
-  margin-left: 10px;
-  margin-bottom: 5px;
-  padding: 8px 12px;
-  background-color: #44fe6c;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.nav-buttons button:hover {
-  background-color: #38c957;
-}
-
-.nav-buttons a {
-  text-decoration: none;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
 .page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.menu-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.user-icon {
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  width: 120px;
+  z-index: 100;
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f5f5f5;
+}
+
+.logout-btn {
+    background-color: #4ade80;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #3aae64;
 }

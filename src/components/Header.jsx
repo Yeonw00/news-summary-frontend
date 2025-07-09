@@ -27,8 +27,8 @@ function Header() {
     };
 
     useEffect(() => {
-        function handleClickOutside(e) {
-            if (menuRef.current && !menuRef.current.contains(e.target)) {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setMenuOpen(false);
             }
         }
@@ -42,32 +42,28 @@ function Header() {
                 News Summary
             </div>
 
-            <nav className="nav-buttons">
-                <div className="relative" ref={menuRef}>
+            <div className="menu-group">
+                <div className="dropdown" ref={menuRef}>
                     <User 
-                        className="cursor-pointer"
+                        className="user-icon"
                         size={24}
-                        onClick={() => setMenuOpen(prev => !prev)}
+                        onClick={() => setMenuOpen(!menuOpen)}
                     />
                     {menuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg border rounded z-50">
-                            <button
-                                onClick={() => { navigate("/profile"); setMenuOpen(false);}}
-                                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                            >
+                        <div className="dropdown-menu">
+                            <button onClick={() => { navigate("/profile"); setMenuOpen(false);}}>
                                 회원정보 수정
                             </button>
-                            <button
-                                onClick={() => { navigate("/payment"); setMenuOpen(false);}}
-                                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                            >
+                            <button onClick={() => { navigate("/payment"); setMenuOpen(false);}}>
                                 결제하기
                             </button>
                         </div>
                     )}
                 </div>
-                <button onClick={handleLogout}>로그아웃</button>
-            </nav>
+                <button className="logout-btn" onClick={handleLogout}>
+                    로그아웃
+                </button>
+            </div>
         </header>
     );
 }
