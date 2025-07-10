@@ -15,7 +15,8 @@ function SummaryDetail() {
 
     return (
         <div>
-            <h1>요약 상세</h1>
+            <h2>요약 상세</h2>
+            <br />
             <p>{detail.summary}</p>
         </div>
     );

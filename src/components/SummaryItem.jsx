@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const getVisibleTitleText = (element) => {
     if (!element) return "";
@@ -34,7 +34,7 @@ function SummaryItem ({
     openMenuId,
     setOpenMenuId
 }) {
-    
+
     const titleRef = useRef(null);
 
     const handleMenuToggle = (e) => {
@@ -43,9 +43,21 @@ function SummaryItem ({
     };
 
     const handleTitleChange = () => {
-        if (editTitle.trim() !== "") {
-            updateTitle(item.id, editTitle);
-        } 
+        if (!editTitle) {
+            setEditingId(null);
+            return;
+        }
+
+        const trimmed = editTitle.trim();
+
+        if (trimmed === item.title || trimmed ==="") {
+            setEditTitle(item.title);
+            setEditingId(null);
+            return;
+        }
+
+        updateTitle(item.id, trimmed);
+        setEditingId(null);
     };
 
     const handleDelete = () => {
@@ -66,7 +78,12 @@ function SummaryItem ({
                     onBlur={handleTitleChange}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") handleTitleChange();
+                        if(e.key === "Escape") {
+                                setEditTitle(item.title);
+                                setEditingId(null);
+                        }
                     }}
+                    className="inline-edit-input"
                 />
             ):(
                 <span
@@ -89,7 +106,7 @@ function SummaryItem ({
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setEditingId(item.id);
-                                setEditTitle("");
+                                setEditTitle(item.title);
                                 setOpenMenuId(null);
                             }}
                         >
