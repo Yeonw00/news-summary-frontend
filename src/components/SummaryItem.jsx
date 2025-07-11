@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const getVisibleTitleText = (element) => {
     if (!element) return "";

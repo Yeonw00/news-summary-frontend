@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
@@ -32,12 +33,17 @@ export const AuthProvider = ({children}) => {
                     setIsLoggedIn(false);
                     setCurrentUser(null);
                     localStorage.removeItem("user");
+                })
+                .finally(() => {
+                    setIsChecking(false);
                 });
+        } else {
+            setIsChecking(false);
         }
     }, []);
 
     return (
-        <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser}}>
+        <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser, isChecking}}>
             {children}
         </AuthContext.Provider>
     );

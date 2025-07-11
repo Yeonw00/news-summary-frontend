@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react";
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const { setIsLoggedIn } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async() => {
