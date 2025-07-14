@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import SummaryDetail from "../components/SummaryDetail";
 import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
+import EditProfileForm from "../components/EditProfileForm";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -47,6 +48,14 @@ function Layout() {
                         <SummaryDetail />
                     </ProtectedRoute>
                 }
+            />
+            <Route 
+              path="/profile"
+              element= {
+                <ProtectedRoute>
+                  <EditProfileForm />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </div>
