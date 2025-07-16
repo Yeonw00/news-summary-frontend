@@ -21,8 +21,12 @@ function Sidebar({ onSelect }) {
     useEffect(() => {
         if(!isLoggedIn) return;
 
+        const token = localStorage.getItem("token");
+        
         fetch("http://localhost:8080/api/summary/list", {
-            credentials: "include"
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
             .then((res) => {
                 if (!res.ok) throw new Error("요약 목록 로딩 실패");

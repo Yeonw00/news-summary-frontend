@@ -18,20 +18,21 @@ function LoginForm() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include",
-                body: JSON.stringify({
-                    username,
-                    password,
-                }),
+                // session 기반에서만 credentials 필요, JWT에서는 필요X
+                //credentials: "include",
+                body: JSON.stringify({ username,password}),
             });
 
             if(response.ok) {
-                localStorage.setItem("user", JSON.stringify({ username: response.username }))
+                const data = await response.json();
+
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify({ username: data.username }))
                 setIsLoggedIn(true);
                 navigate("/summary");
             } else {
-                const data = await response.text();
-                setMessage(`로그인 실패: ${data}`);
+                const data = await response.json();
+                setMessage(`로그인 실패: ${data.message}`);
             }
         } catch (error) {
             setMessage("서버 요청 실패");

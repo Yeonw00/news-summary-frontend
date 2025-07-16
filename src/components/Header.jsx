@@ -16,11 +16,11 @@ function Header() {
 
         const res = await fetch('http://localhost:8080/api/auth/logout', {
             method: "POST",
-            credentials: "include"
         })
 
         if(res.ok) {
             setIsLoggedIn(false);
+            localStorage.removeItem("token");
             localStorage.removeItem("user");
             navigate("/");
         }
