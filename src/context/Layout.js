@@ -9,6 +9,7 @@ import SummaryDetail from "../components/SummaryDetail";
 import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
 import EditProfileForm from "../components/EditProfileForm";
+import NotFound from "../components/NotFound";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -57,6 +58,7 @@ function Layout() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>
