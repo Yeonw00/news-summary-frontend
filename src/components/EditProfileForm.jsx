@@ -16,7 +16,7 @@ function EditProfileForm() {
         };
 
         try {
-            const res = await fetch("http://localhost:8080/api/user/update", {
+            const res = await fetch("http://localhost:8080/api/user/me", {
                 method:"PATCH",
                 headers: {
                     "Content-Type": "application/json"
