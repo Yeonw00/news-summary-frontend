@@ -6,72 +6,108 @@ function EditProfileForm() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const token = localStorage.getItem("token");
 
-        const payload = {
-            email,
-            newPassword,
-            currentPassword
-        };
+    const handleEmailChange = async () => {
+        if (!email) return alert("새 이메일을 입력해주세요.");
 
         try {
             const res = await fetch("http://localhost:8080/api/user/me", {
                 method:"PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
-                credentials: "include",
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ email: email })
             });
 
-            if(!res.ok) throw new Error("회원정보 수정 실패");
+            if(!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || "회원정보 수정 실패");
+            }
 
             setMessage("회원정보가 수정되었습니다.");
-            setNewPassword("");
+            setEmail("");
+        } catch (err) {
+            setMessage("수정 실패: " + err.message);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (!currentPassword || !newPassword) return alert("현재 및 새 비밀번호를 입력해주세요.");
+
+        try {
+            const res = await fetch("http://localhost:8080/api/user/me", {
+                method:"PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                 })
+            });
+
+            if(!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || "회원정보 수정 실패");
+            }
+
+            setMessage("회원정보가 수정되었습니다.");
             setCurrentPassword("");
+            setNewPassword("");
         } catch (err) {
             setMessage("수정 실패: " + err.message);
         }
     };
 
     return (
-        <div className="form-container">
-            <h2>회원정보 수정</h2>
-            <form className="form-title" onSubmit={handleSubmit}>
+        <div className="edit-container">
+            <h2 className="edit-header">회원정보 수정</h2>
+            <br />
+            <div className="edit-group">
                 <label>이메일</label>
-                <input 
-                    type="email"
-                    placeholder="새 이메일"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <br />
+                <div className="edit-row">
+                    <input 
+                        type="email"
+                        placeholder="새 이메일"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button onClick={handleEmailChange} className="form-button" >
+                        변경
+                    </button>
+                </div>
+            </div>
 
-                <label>현재 비밀번호</label>
-                <input 
-                    type="password"
-                    placeholder="현재 비밀번호"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    required
-                />
-                <br />
+            <div className="edit-group">
+                <label>비밀번호</label>
+                <div className="edit-row">
+                    <input 
+                        type="password"
+                        placeholder="현재 비밀번호"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                    />
+                    <div style={{ width: '50px' }}></div>
+                </div>
+            </div>
 
-                <label>새 비밀번호</label>
-                <input 
-                    type="password"
-                    placeholder="변경할 비밀번호"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <br />
-
-                
-
-                <button type="submit" className="form-button">수정하기</button>
-            </form>
-
+            <div className="edit-group"> 
+                <div className="edit-row">
+                    <input 
+                        type="password"
+                        placeholder="변경할 비밀번호"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <button onClick={handlePasswordChange} className="form-button">
+                        변경
+                    </button>
+                </div>
+            </div>
             {message && <p style={{marginTop: "1rem", color: "#444"}}>{message}</p>}
         </div>
     );
