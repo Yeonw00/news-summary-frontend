@@ -1,10 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../.css";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
 import SummaryItem from "./SummaryItem";
 
-function Sidebar({ onSelect }) {
+function Sidebar({ selectedView, setSelectedView }) {
     const [summaries, setSummaries] = useState([]);
     const [isOpen, setIsOpen] = useState(true);
     const { isLoggedIn } = useAuth();
@@ -75,7 +75,12 @@ function Sidebar({ onSelect }) {
                         <br />
                         <nav>
                             <ul>
-                                <li ><Link to="/summary">새 요약</Link></li>
+                                <li >
+                                    <button onClick={() => setSelectedView("summary")}>새 요약</button>
+                                </li>
+                                <li>
+                                    <button onClick={() => setSelectedView("search")}>기사 검색</button>
+                                </li>
                             </ul>
                         </nav>
                         <br />

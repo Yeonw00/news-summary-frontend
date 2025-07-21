@@ -10,18 +10,24 @@ import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
 import EditProfileForm from "../components/EditProfileForm";
 import NotFound from "../components/NotFound";
+import { useState } from "react";
+import ArticleSearch from "../components/ArticleSearch";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
+  const [selectedView, setSelectedView] = useState("summary");
 
   if (isChecking) return null;
 
   return(
     <div className="page-wrapper">
       <div className="app-container">
-        {isLoggedIn && <Sidebar />}
+        {isLoggedIn && (
+          <Sidebar selectedView={selectedView} setSelectedView={setSelectedView} /> 
+        )}
         <div className="main-section">
           {isLoggedIn && <Header />}
+          {selectedView === "search" && <ArticleSearch selectedView={selectedView} setSelectedView={setSelectedView} />}
           <Routes>
             <Route path="/" 
               element={
