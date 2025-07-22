@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ArticleSearch({selectedView, setSelectedView}) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const navigate = useNavigate();
+
+    useEffect (() => {
+        const handleEsc = (e) => {
+            if (e.key === "Escape") {
+                setSelectedView("summary");
+            }
+        };
+        
+        window.addEventListener("keydown", handleEsc);
+        return () => window.removeEventListener("keydown", handleEsc);
+    }, [setSelectedView]);
 
     const handleSearch = async () => {
         if (!query.trim()) return;
