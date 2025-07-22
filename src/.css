@@ -438,17 +438,58 @@ html, body, #root {
 }
 
 .search-results {
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
 }
 
 .search-result-item {
-  padding: 0.6rem;
-  border-bottom: 1px solid #eee;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  padding: 1rem;
+  transition: transform 0.2s ease;
   cursor: pointer;
 }
 
 .search-result-title:hover {
-  background-color: #f2f2f2;
+  transform: translateY(-5px);
+  background-color: #f9f9f9;
+}
+
+.search-result-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.search-result-url {
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.exit-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.exit-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #9d9898;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 36px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.exit-button:hover {
+  background-color: #c2c0c0;
+  color: black;
 }

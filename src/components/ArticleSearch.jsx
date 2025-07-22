@@ -40,9 +40,16 @@ function ArticleSearch({selectedView, setSelectedView}) {
         setSelectedView('summary');
     };
 
+    const handleExit = () => {
+        setSelectedView('summary');
+    };
+
     return (
         <div className="floating-search-overlay">
             <div className="floating-search-box">
+                <div className="exit-container">
+                    <button className="exit-button" onClick={handleExit}>×</button>
+                </div>
                 <h2>기사 검색</h2>
                     <input
                         type="text"
