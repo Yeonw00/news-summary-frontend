@@ -76,7 +76,7 @@ function Sidebar({ selectedView, setSelectedView }) {
                         <nav>
                             <ul>
                                 <li >
-                                    <button onClick={() => setSelectedView("summary")}>새 요약</button>
+                                    <button onClick={() => navigate('/summary')}>새 요약</button>
                                 </li>
                                 <li>
                                     <button onClick={() => setSelectedView("search")}>기사 검색</button>
