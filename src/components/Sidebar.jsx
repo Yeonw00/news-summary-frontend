@@ -17,15 +17,14 @@ function Sidebar({ selectedView, setSelectedView }) {
     // const handleLogout = () =>  {
     //     setIsLoggedIn(false);
     // };
-
+    
     useEffect(() => {
         if(!isLoggedIn) return;
 
-        const token = localStorage.getItem("token");
         
         fetch("http://localhost:8080/api/summary/list", {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${localStorage.getItem("token")}`
             }
         })
             .then((res) => {
@@ -44,9 +43,9 @@ function Sidebar({ selectedView, setSelectedView }) {
         await fetch(`http://localhost:8080/api/summary/${id}/title`, {
             method: "PATCH",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
             },
-            credentials: "include",
             body: JSON.stringify({ title: newTitle})
         });
 
@@ -59,7 +58,7 @@ function Sidebar({ selectedView, setSelectedView }) {
     const deleteSummary = async (id) => {
         await fetch(`http://localhost:8080/api/summary/delete/${id}`, {
             method: "DELETE",
-            credentials: "include",
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
         });
 
         setEditingId(null);

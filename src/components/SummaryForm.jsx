@@ -9,12 +9,13 @@ function SummaryForm() {
       const handleSubmit = async () => {
         setSummary('');
 
+        
         const response = await fetch('http://localhost:8080/api/summary/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
           },
-          credentials: "include",
           body: JSON.stringify({
                     originalUrl: url,
                     originalContent: content
