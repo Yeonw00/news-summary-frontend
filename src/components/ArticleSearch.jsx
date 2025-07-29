@@ -21,19 +21,19 @@ function ArticleSearch({selectedView, setSelectedView}) {
         if (!query.trim()) return;
         try {
             const res = await fetch(`http://localhost:8080/api/summary/search?keyword=${encodeURIComponent(query)}`, {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
             });
 
+            const text = await res.text();
+
             if(!res.ok) {
-                const text = await res.text();
                 console.error("서버 응답 오류:", res.status, text);
                 return;
             }
 
-            const text = await res.text();
             if (!text) {
                 setResults([]);
                 return;
