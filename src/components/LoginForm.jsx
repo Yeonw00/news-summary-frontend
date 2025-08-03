@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import googleLogo from "../image/signin-assets/google_logo.png";
 
 function LoginForm() {
     const { setIsLoggedIn } = useAuth();
@@ -39,6 +40,10 @@ function LoginForm() {
         }
     };
 
+    const handleGoogleLogin = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorize/google";
+    }
+
     return (
         <div className="form-container">
             <h2>로그인</h2>
@@ -60,6 +65,10 @@ function LoginForm() {
                 />
                 <br />
                 <button className="form-button" type="submit">로그인</button>
+                <br />
+                <button className="google-login-btn" onClick={handleGoogleLogin}>
+                    <img src={googleLogo} alt="Google Logo" />
+                </button>
             </form>
             <p>{message}</p>
         </div>
