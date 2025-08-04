@@ -12,6 +12,7 @@ import EditProfileForm from "../components/EditProfileForm";
 import NotFound from "../components/NotFound";
 import { useState } from "react";
 import ArticleSearch from "../components/ArticleSearch";
+import GoogleSuccess from "../components/GoogleSuccess";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -40,6 +41,7 @@ function Layout() {
             />
             <Route path="/signup" element={<RegisterForm />}/>
             <Route path="/login" element={<LoginForm />}/>
+            <Route path="google-success" element={<GoogleSuccess />}/>
             <Route 
               path="/summary" 
               element={

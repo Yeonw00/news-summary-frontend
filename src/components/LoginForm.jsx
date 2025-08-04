@@ -40,9 +40,15 @@ function LoginForm() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorize/google";
-    }
+    const handleGoogleLogin = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/google/login");
+            const loginUrl = await response.text();
+            window.location.href = loginUrl;
+        } catch (error) {
+            console.error("구글 로그인 URL 요청 실패:", error);
+        }
+    };
 
     return (
         <div className="form-container">
