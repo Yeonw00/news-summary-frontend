@@ -11,18 +11,16 @@ function GoogleSuccess() {
         const token = params.get("token");
         const username = params.get("username");
 
-        if(token) {
-            localStorage.setItem("user", JSON.stringify({
-                user: username,
-                token: token
-            }))
+        if(token && username) {
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", username);
             setIsLoggedIn(true);
 
-            navigate("/summary");
+            navigate("/summary", { replace: true });
         } else {
-            navigate("/login");
+            navigate("/login", { replace: true });
         }
-    }, [navigate]);
+    }, [navigate, setIsLoggedIn]);
     
     return <div>로그인 처리 중입니다...</div>;
 }
