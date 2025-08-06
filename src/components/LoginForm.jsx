@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import googleLogo from "../image/signin-assets/google_logo.png";
 
 function LoginForm() {
     const { setIsLoggedIn } = useAuth();
@@ -40,16 +39,6 @@ function LoginForm() {
         }
     };
 
-    const handleGoogleLogin = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/auth/google/login");
-            const loginUrl = await response.text();
-            window.location.href = loginUrl;
-        } catch (error) {
-            console.error("구글 로그인 URL 요청 실패:", error);
-        }
-    };
-
     return (
         <div className="form-container">
             <h2>로그인</h2>
@@ -71,10 +60,6 @@ function LoginForm() {
                 />
                 <br />
                 <button className="form-button" type="submit">로그인</button>
-                <br />
-                <button className="google-login-btn" onClick={handleGoogleLogin}>
-                    <img src={googleLogo} alt="Google Logo" />
-                </button>
             </form>
             <p>{message}</p>
         </div>
