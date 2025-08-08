@@ -6,7 +6,11 @@ function SummaryDetail() {
     const [detail, setDetail] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/summary/detail/${requestId}`)
+        fetch(`http://localhost:8080/api/summary/detail/${requestId}`, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        })
             .then((res) => res.json())
             .then(setDetail);
     }, [requestId]);

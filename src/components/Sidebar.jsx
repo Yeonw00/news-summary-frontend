@@ -4,8 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
 import SummaryItem from "./SummaryItem";
 
-function Sidebar({ selectedView, setSelectedView }) {
-    const [summaries, setSummaries] = useState([]);
+function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView }) {
     const [isOpen, setIsOpen] = useState(true);
     const { isLoggedIn } = useAuth();
     const [openMenuId, setOpenMenuId] = useState(null);
@@ -19,22 +18,9 @@ function Sidebar({ selectedView, setSelectedView }) {
     // };
     
     useEffect(() => {
-        if(!isLoggedIn) return;
-
-        
-        fetch("http://localhost:8080/api/summary/list", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error("요약 목록 로딩 실패");
-                return res.json();
-            })
-            .then(setSummaries)
-            .catch((err) => {
-                console.error(err);
-            })
+        if(isLoggedIn) {
+            fetchSummaryList();
+        }
     }, [isLoggedIn]);
 
     const updateTitle = async (id, newTitle) => {
@@ -50,19 +36,19 @@ function Sidebar({ selectedView, setSelectedView }) {
         });
 
         setEditingId(null);
-        setSummaries((prev) => 
-            prev.map((item) => (item.id === id ? {...item, title: newTitle} : item))
-        );
+        await fetchSummaryList();
     };
 
     const deleteSummary = async (id) => {
         await fetch(`http://localhost:8080/api/summary/delete/${id}`, {
             method: "DELETE",
-            'Authorization': `Bearer ${localStorage.getItem("token")}`
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            }
         });
 
         setEditingId(null);
-        setSummaries((prev) => prev.filter((item) => item.id !== id));
+        await fetchSummaryList();
     };
 
     return(
@@ -84,7 +70,7 @@ function Sidebar({ selectedView, setSelectedView }) {
                         </nav>
                         <br />
                             <div className="summary-list">
-                                {summaries.map((item) => (
+                                {(summaries || []).map((item) => (
                                     <SummaryItem
                                         key={item.id}
                                         item={item}

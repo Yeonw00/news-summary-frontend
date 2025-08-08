@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../.css";
 
-function SummaryForm() {
+function SummaryForm({ onSummarized }) {
       const [url, setUrl] = useState('');
       const [content, setContent] = useState('');
       const [summary, setSummary] = useState('');
@@ -24,6 +24,12 @@ function SummaryForm() {
     
         const text = await response.text();
         setSummary(text);
+
+        // 요약 성공 후 리스트 다시 불러오기
+        if (onSummarized) {
+        onSummarized();
+        }
+
       };
     return (
         <div className="summary-container">

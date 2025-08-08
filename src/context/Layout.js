@@ -10,21 +10,38 @@ import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
 import EditProfileForm from "../components/EditProfileForm";
 import NotFound from "../components/NotFound";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
   const [selectedView, setSelectedView] = useState("summary");
+  const [summaries, setSummaries] = useState([]);
 
+  const fetchSummaryList = async () => {
+    const res = await fetch("http://localhost:8080/api/summary/list", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    if(res.ok) {
+      const data = await res.json();
+      setSummaries(data);
+    }
+  };
+  
+  useEffect(() => {
+    fetchSummaryList();
+  }, []);
+  
   if (isChecking) return null;
 
   return(
     <div className="page-wrapper">
       <div className="app-container">
         {isLoggedIn && (
-          <Sidebar selectedView={selectedView} setSelectedView={setSelectedView} /> 
+          <Sidebar summaries={summaries} fetchSummaryList={fetchSummaryList} selectedView={selectedView} setSelectedView={setSelectedView} /> 
         )}
         <div className="main-section">
           {isLoggedIn && <Header />}
@@ -46,7 +63,7 @@ function Layout() {
               path="/summary" 
               element={
                 <ProtectedRoute>
-                    <SummaryForm />
+                    <SummaryForm onSummarized={fetchSummaryList} />
                 </ProtectedRoute>
               }
             />
