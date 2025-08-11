@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../.css";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
@@ -12,6 +12,7 @@ function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView })
     const [editTitle, setEditTitle] = useState("");
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     // const handleLogout = () =>  {
     //     setIsLoggedIn(false);
@@ -49,6 +50,11 @@ function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView })
 
         setEditingId(null);
         await fetchSummaryList();
+
+         // 현재 경로가 해당 상세 페이지면 목록 페이지로 이동
+        if (location.pathname === `/summary/${id}`) {
+            navigate("/summary");
+        }
     };
 
     return(
