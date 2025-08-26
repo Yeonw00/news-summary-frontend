@@ -18,9 +18,7 @@ function Home() {
 
     const handleNaverLogin = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/auth/naver/login");
-            const loginUrl = await response.text();
-            window.location.href = loginUrl;
+            window.location.href = "http://localhost:8080/api/auth/naver/login";
         } catch (error) {
             console.error("네이버 로그인 URL 요청 실패:", error);
         }
