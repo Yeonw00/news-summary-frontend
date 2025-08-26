@@ -13,6 +13,7 @@ import NotFound from "../components/NotFound";
 import { useEffect, useState } from "react";
 import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
+import NaverSuccess from "../components/NaverSuccess";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -59,6 +60,7 @@ function Layout() {
             <Route path="/signup" element={<RegisterForm />}/>
             <Route path="/login" element={<LoginForm />}/>
             <Route path="google-success" element={<GoogleSuccess />}/>
+            <Route path="naver-success" element={<NaverSuccess />} />
             <Route 
               path="/summary" 
               element={
