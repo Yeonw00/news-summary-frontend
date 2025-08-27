@@ -22,7 +22,7 @@ function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView })
         if(isLoggedIn) {
             fetchSummaryList();
         }
-    }, [isLoggedIn, fetchSummaryList]);
+    }, [isLoggedIn]);
 
     const updateTitle = async (id, newTitle) => {
         if (newTitle.trim() === "") return;

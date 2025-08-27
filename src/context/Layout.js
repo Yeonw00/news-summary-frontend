@@ -14,13 +14,17 @@ import { useEffect, useState } from "react";
 import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
 import NaverSuccess from "../components/NaverSuccess";
+import { useCallback } from "react";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
   const [selectedView, setSelectedView] = useState("summary");
   const [summaries, setSummaries] = useState([]);
 
-  const fetchSummaryList = async () => {
+  const fetchSummaryList = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if(!token) return;
+    
     const res = await fetch("http://localhost:8080/api/summary/list", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -30,11 +34,13 @@ function Layout() {
       const data = await res.json();
       setSummaries(data);
     }
-  };
+  }, []);
   
   useEffect(() => {
-    fetchSummaryList();
-  }, []);
+    if(isLoggedIn) {
+      fetchSummaryList();
+    }
+  }, [isLoggedIn, fetchSummaryList]);
   
   if (isChecking) return null;
 
