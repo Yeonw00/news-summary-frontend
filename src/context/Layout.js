@@ -1,20 +1,22 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
 import RegisterForm from "../components/RegisterForm";
 import LoginForm from "../components/LoginForm";
 import SummaryForm from "../components/SummaryForm";
 import Home from "../components/Home";
 import Sidebar from "../components/Sidebar";
-import { useAuth } from "../context/AuthContext";
 import SummaryDetail from "../components/SummaryDetail";
 import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
 import EditProfileForm from "../components/EditProfileForm";
 import NotFound from "../components/NotFound";
-import { useEffect, useState } from "react";
 import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
 import NaverSuccess from "../components/NaverSuccess";
-import { useCallback } from "react";
+import KakaoSuccess from "../components/KakaoSuccess";
+
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -67,6 +69,7 @@ function Layout() {
             <Route path="/login" element={<LoginForm />}/>
             <Route path="google-success" element={<GoogleSuccess />}/>
             <Route path="naver-success" element={<NaverSuccess />} />
+            <Route path="kakao-success" element={<KakaoSuccess />} />
             <Route 
               path="/summary" 
               element={
