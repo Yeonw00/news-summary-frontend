@@ -27,11 +27,9 @@ function Home() {
 
     const handleKakaoLogin = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/auth/kakao/login");
-            const loginUrl = await response.text();
-            window.location.href = loginUrl;
+            window.location.href = "http://localhost:8080/api/auth/kakao/login";
         } catch (error) {
-            console.error("구글 로그인 URL 요청 실패:", error);
+            console.error("카카오 로그인 URL 요청 실패:", error);
         }
     };
 
