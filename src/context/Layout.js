@@ -16,6 +16,7 @@ import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
 import NaverSuccess from "../components/NaverSuccess";
 import KakaoSuccess from "../components/KakaoSuccess";
+import PaymentForm from "../components/Payment";
 
 
 function Layout() {
@@ -91,6 +92,14 @@ function Layout() {
               element= {
                 <ProtectedRoute>
                   <EditProfileForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/payment"
+              element= {
+                <ProtectedRoute>
+                  <PaymentForm />
                 </ProtectedRoute>
               }
             />
