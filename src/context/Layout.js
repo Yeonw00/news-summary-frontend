@@ -16,7 +16,7 @@ import ArticleSearch from "../components/ArticleSearch";
 import GoogleSuccess from "../components/GoogleSuccess";
 import NaverSuccess from "../components/NaverSuccess";
 import KakaoSuccess from "../components/KakaoSuccess";
-import PaymentForm from "../components/Payment";
+import PaymentForm from "../components/PaymentForm";
 
 
 function Layout() {
