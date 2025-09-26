@@ -7,7 +7,7 @@ const PRODUCTS = [
     {code: "COIN_3000", label: "3,000코인", price: 27000},
 ];
 
-function PaymentForm() {
+function Charge() {
     const [widget, setWidget] = useState(null);
     const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
 
@@ -26,8 +26,8 @@ function PaymentForm() {
             orderId: order.orderId,
             orderName: p.code,
             amount: order.amount,
-            successUrl: window.location.origin + "/payment/success",
-            failUrl: window.location.origin + "/payment/fail",
+            successUrl: window.location.origin + "/charge/success",
+            failUrl: window.location.origin + "/charge/fail",
         });
     }
 
@@ -43,4 +43,4 @@ function PaymentForm() {
     );
 }
 
-export default PaymentForm;
+export default Charge;

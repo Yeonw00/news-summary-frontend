@@ -11,13 +11,13 @@ import SummaryDetail from "../components/SummaryDetail";
 import Header from "../components/Header";
 import ProtectedRoute from "./ProtectedRoute";
 import EditProfileForm from "../components/EditProfileForm";
-import NotFound from "../components/NotFound";
+import NotFound from "../pages/NotFound";
 import ArticleSearch from "../components/ArticleSearch";
-import GoogleSuccess from "../components/GoogleSuccess";
-import NaverSuccess from "../components/NaverSuccess";
-import KakaoSuccess from "../components/KakaoSuccess";
-import PaymentForm from "../components/PaymentForm";
-
+import GoogleSuccess from "../pages/GoogleSuccess";
+import NaverSuccess from "../pages/NaverSuccess";
+import KakaoSuccess from "../pages/KakaoSuccess"
+import Charge from "../components/Charge";
+import ChargeSuccess from "../pages/ChargeSuccess";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -71,6 +71,7 @@ function Layout() {
             <Route path="google-success" element={<GoogleSuccess />}/>
             <Route path="naver-success" element={<NaverSuccess />} />
             <Route path="kakao-success" element={<KakaoSuccess />} />
+            <Route path="/charge/success" element={<ChargeSuccess />} />
             <Route 
               path="/summary" 
               element={
@@ -96,10 +97,10 @@ function Layout() {
               }
             />
             <Route 
-              path="/payment"
+              path="/charge"
               element= {
                 <ProtectedRoute>
-                  <PaymentForm />
+                  <Charge />
                 </ProtectedRoute>
               }
             />
