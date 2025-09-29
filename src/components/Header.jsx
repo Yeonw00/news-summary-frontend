@@ -67,7 +67,7 @@ function Header() {
                             <button onClick={() => { navigate("/profile"); setMenuOpen(false);}}>
                                 회원정보 수정
                             </button>
-                            <button onClick={() => { navigate("/payment"); setMenuOpen(false);}}>
+                            <button onClick={() => { navigate("/charge"); setMenuOpen(false);}}>
                                 결제하기
                             </button>
                         </div>
