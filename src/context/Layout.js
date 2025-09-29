@@ -18,6 +18,7 @@ import NaverSuccess from "../pages/NaverSuccess";
 import KakaoSuccess from "../pages/KakaoSuccess"
 import Charge from "../components/Charge";
 import ChargeSuccess from "../pages/ChargeSuccess";
+import ChargeFail from "../pages/ChargeFail";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -72,6 +73,7 @@ function Layout() {
             <Route path="naver-success" element={<NaverSuccess />} />
             <Route path="kakao-success" element={<KakaoSuccess />} />
             <Route path="/charge/success" element={<ChargeSuccess />} />
+            <Route path="/charge/fail" element={<ChargeFail />} />
             <Route 
               path="/summary" 
               element={
