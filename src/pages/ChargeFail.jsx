@@ -18,4 +18,4 @@ function ChargeFail() {
     ) 
 }
 
-export defaut ChargeFail;
+export default ChargeFail;
