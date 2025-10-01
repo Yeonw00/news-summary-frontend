@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "../api/client";
-import { loadTossWidget } from "../lib/tossWidget";
+import loadPaymentWidgetScript from "../lib/tossWidget";
 import { GiTwoCoins } from "react-icons/gi";
 
 const PRODUCTS = [
@@ -9,11 +9,16 @@ const PRODUCTS = [
 ];
 
 function Charge() {
-    const [widget, setWidget] = useState(null);
-    const [ready, setReady] = useState(false);
+    const [paymentWidget, setPaymentWidget] = useState(null);
     const [balance, setBalance] = useState(null);
-    const [busyCode, setBusyCode] = useState(null);
     const [error, setError] = useState("");
+    const [selected, setSelected] = useState(null);
+    const [order, setOrder] = useState(null);
+    const [isRendering, setIsRendering] = useState(false);
+    
+    const methodsRef = useRef(null);
+    const agreementRef = useRef(null);
+
     const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
 
     useEffect(() => {
@@ -21,17 +26,18 @@ function Charge() {
 
         (async () => {
             try{
+                apiFetch("api/wallet/me")
+                    .then((d => setBalance(d?.balance ?? 0)))
+                    .catch(() => setBalance(0));
+
                 if(!clientKey) {
                     setError("결제 키가 설정되지 않았습니다. (REACT_APP_TOSS_CLIENT_KEY)");
                     return;
                 }
-                const PW = await loadTossWidget();
-                const instance = PW(clientKey, PW.ANONYMOUS);
-                if(mounted) {
-                    setWidget(instance);
-                    setReady(true);
-                }
-            } catch(e) {
+                const PaymentWidget = await loadPaymentWidgetScript();
+                const widget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS);
+                if(mounted) setPaymentWidget(widget);
+            } catch (e) {
                 console.error(e);
                 setError("결제 위젯 로딩에 실패했습니다.");
             }
@@ -42,36 +48,61 @@ function Charge() {
         };
     }, [clientKey]);
 
-    async function handlePay(p) {
-        if(!ready || !widget) return;
+    async function selectProduct(p) {
+        if(!paymentWidget) return;
         setError("");
-        setBusyCode(p.code);
+        setSelected(p);
+        setOrder(null);
+        setIsRendering(true);
+
         try {
-            // 1) 서버에서 주문 생성 (orderId, amount 확보)
-            const order = await apiFetch("/api/payments/orders", {
+            // 1) 서버 주문 생성(orderId, amount 반환)
+            const created = await apiFetch("/api/payments/orders", {
                 method: "POST",
-                body: JSON.stringify({ productCode: p.code}),
+                body: JSON.stringify({ productCode: p.code }),
             });
-            if (!order.orderId || !order?.amount) {
+            if(!created?.orderId || !created?.amount) {
                 throw new Error("주문 생성에 실패했습니다.");
             }
+            setOrder(created);
 
-            // 2) Toss 결제창 호출 (성공/실패 페이지는 라우팅에 맞게)
-            await widget.requestPayment({
+            // 2) 위젯 컨테이너 비우기(재렌더링 대비)
+            if (methodsRef.current) methodsRef.current.innerHTML = "";
+            if (agreementRef.current) agreementRef.current.innerHTML = "";
+
+            // 3) 결제수단/약관 위젯 렌더링 (금액 = 서버가 계산한 amount)
+            await paymentWidget.renderPaymentMethods(methodsRef.current, {
+                value: created.amount,
+            });
+            await paymentWidget.renderAgreement(agreementRef.current);
+            setOrder(created);
+        } catch (e) {
+            console.error(e);
+            setError(e?.message || "결제 위젯 렌더링에 실패했습니다.");
+        } finally {
+            setIsRendering(false);
+        }
+    }
+
+    // 결제 요청(수단 미지정: 사용자가 위젯 UI에서 선택한 수단으로 결제)
+    async function requestPay() {
+        if(!paymentWidget || !order || !selected) return;
+        setError("");
+
+        try {
+            await paymentWidget.requestPayment({
                 orderId: order.orderId,
-                orderName: p.code,
+                orderName: selected.code,
                 amount: order.amount,
                 successUrl: `${window.location.origin}/charge/success?orderId=${encodeURIComponent(
                     order.orderId
                 )}&amount=${order.amount}`,
                 failUrl: `${window.location.origin}/charge/fail`,
             });
-            // 성공 시 successUrl로 이동되므로 아래 코드는 보통 실행되지 않음
-        } catch(e) {
+            // 성공 시 successUrl로 이동
+        } catch (e) {
             console.error(e);
             setError(e?.message || "결제 요청에 실패했습니다.");
-        } finally {
-            setBusyCode(null);
         }
     }
 
@@ -103,29 +134,74 @@ function Charge() {
                 </div>
             )}
             
-            <div style={{ display: "grid", gap: 10 }}>
-                {PRODUCTS.map(p => (
-                    <button 
-                        key={p.code} 
-                        onClick={() => handlePay(p)}
-                        disabled={!ready || !!busyCode}
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            padding: "12px 14px",
-                            borderRadius: 12,
-                            border: "1px solid #ddd",
-                            background: busyCode === p.code ? "#f3f3f3" : "white",
-                            cursor: !ready || !!busyCode ? "not-allowed" : "pointer",
-                            fontSize: 16,
-                        }}
-                    >
+            <div style={{ display: "grid", gap: 10, marginBottom: 16 }}>
+                {PRODUCTS.map(p => {
+                    const active = selected?.code === p.code;
+                    return(
+                        <button 
+                            key={p.code} 
+                            onClick={() => selectProduct(p)}
+                            disabled={!paymentWidget || isRendering}
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "12px 14px",
+                                borderRadius: 12,
+                                border: active ? "2px solid #222" : "1px solid #ddd",
+                                background: active ? "#f7f7f7" : "white",
+                                cursor: !paymentWidget || isRendering ? "not-allowed" : "pointer",
+                                fontSize: 16,
+                            }}
+                        >
                         <span>{p.label}</span>
                         <strong>{p.price.toLocaleString()}원</strong>
                     </button>
-                ))}
+                );
+                })}
             </div>
+
+            {/* 결제수단/약관 위젯 영역 */}
+            <div 
+                ref={methodsRef}
+                style= {{
+                    minHeight: 120,
+                    padding: 12,
+                    border: "1px dashed #ccc",
+                    borderRadius: 12,
+                    marginBottom: 12,
+                    background: "#fafafa",
+                }}
+            />
+            <div 
+                ref={agreementRef}
+                style={{
+                    minHeight: 80,
+                    padding: 12,
+                    border: "1px dashed #ccc",
+                    borderRadius: 12,
+                    marginBottom: 16,
+                    background: "#fafafa",
+                }}
+            />
+
+            <button
+                onClick={requestPay}
+                disabled={!order || !selected || isRendering}
+                style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    borderRadius: 10,
+                    border: "none",
+                    background: (!order || !selected || isRendering) ? "#65c7f3" : "#3182f6",
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: 700,
+                    cursor: (!order || !selected || isRendering) ? "not-allowed" : "pointer",
+                }}
+            >
+                결제하기
+            </button>
 
             <p style={{ color: "#666", fontSize: 12, marginTop: 12 }}>
                 ※ 테스트 모드에서는 토스 테스트 카드번호로 결제하세요. 운영 전환 시 콘솔 도메인/리다이렉트/키를 점검하세요.
