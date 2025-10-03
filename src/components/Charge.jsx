@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "../api/client";
-import loadPaymentWidgetScript from "../lib/tossWidget";
+import { loadPaymentWidget, ANONYMOUS } from "@tosspayments/payment-widget-sdk";
 import { GiTwoCoins } from "react-icons/gi";
 
 const PRODUCTS = [
@@ -15,6 +15,7 @@ function Charge() {
     const [selected, setSelected] = useState(null);
     const [order, setOrder] = useState(null);
     const [isRendering, setIsRendering] = useState(false);
+    const [amount, setAmount] = useState(null); 
     
     const methodsRef = useRef(null);
     const agreementRef = useRef(null);
@@ -34,8 +35,7 @@ function Charge() {
                     setError("결제 키가 설정되지 않았습니다. (REACT_APP_TOSS_CLIENT_KEY)");
                     return;
                 }
-                const PaymentWidget = await loadPaymentWidgetScript();
-                const widget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS);
+                const widget = await loadPaymentWidget(clientKey, ANONYMOUS);
                 if(mounted) setPaymentWidget(widget);
             } catch (e) {
                 console.error(e);
@@ -70,11 +70,19 @@ function Charge() {
             if (methodsRef.current) methodsRef.current.innerHTML = "";
             if (agreementRef.current) agreementRef.current.innerHTML = "";
 
-            // 3) 결제수단/약관 위젯 렌더링 (금액 = 서버가 계산한 amount)
+            // 3) 금액 상태 셋업(CheckoutPage와 동일 구조)
+            const baseAmount = { currency: "KRW", value: created.amount };
+            setAmount(baseAmount);
+
+            // 4) 최초 렌더 시 금액을 옵션을 넘겨서 렌더
             await paymentWidget.renderPaymentMethods(methodsRef.current, {
+                variantKey: "DEFAULT",
                 value: created.amount,
+                currency: "KRW",
             });
-            await paymentWidget.renderAgreement(agreementRef.current);
+            await paymentWidget.renderAgreement(agreementRef.current, {
+                variantKey: "AGREEMENT",
+            });
             setOrder(created);
         } catch (e) {
             console.error(e);
@@ -93,7 +101,7 @@ function Charge() {
             await paymentWidget.requestPayment({
                 orderId: order.orderId,
                 orderName: selected.code,
-                amount: order.amount,
+                amount: amount.value,
                 successUrl: `${window.location.origin}/charge/success?orderId=${encodeURIComponent(
                     order.orderId
                 )}&amount=${order.amount}`,

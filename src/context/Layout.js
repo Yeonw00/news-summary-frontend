@@ -102,7 +102,7 @@ function Layout() {
               path="/charge"
               element= {
                 <ProtectedRoute>
-                  <Charge />
+                  <Charge/>
                 </ProtectedRoute>
               }
             />
