@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 import { loadPaymentWidget, ANONYMOUS } from "@tosspayments/payment-widget-sdk";
 import { GiTwoCoins } from "react-icons/gi";
@@ -17,9 +17,6 @@ function Charge() {
     const [isRendering, setIsRendering] = useState(false);
     const [amount, setAmount] = useState(null); 
     
-    const methodsRef = useRef(null);
-    const agreementRef = useRef(null);
-
     const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
 
     useEffect(() => {
@@ -66,21 +63,21 @@ function Charge() {
             }
             setOrder(created);
 
-            // 2) 위젯 컨테이너 비우기(재렌더링 대비)
-            if (methodsRef.current) methodsRef.current.innerHTML = "";
-            if (agreementRef.current) agreementRef.current.innerHTML = "";
+            // // 2) 위젯 컨테이너 비우기(재렌더링 대비)
+            // if (methodsRef.current) methodsRef.current.innerHTML = "";
+            // if (agreementRef.current) agreementRef.current.innerHTML = "";
 
             // 3) 금액 상태 셋업(CheckoutPage와 동일 구조)
             const baseAmount = { currency: "KRW", value: created.amount };
             setAmount(baseAmount);
 
             // 4) 최초 렌더 시 금액을 옵션을 넘겨서 렌더
-            await paymentWidget.renderPaymentMethods(methodsRef.current, {
+            await paymentWidget.renderPaymentMethods("#payment-method", {
                 variantKey: "DEFAULT",
                 value: created.amount,
                 currency: "KRW",
             });
-            await paymentWidget.renderAgreement(agreementRef.current, {
+            await paymentWidget.renderAgreement("#agreement", {
                 variantKey: "AGREEMENT",
             });
             setOrder(created);
@@ -104,7 +101,7 @@ function Charge() {
                 amount: amount.value,
                 successUrl: `${window.location.origin}/charge/success?orderId=${encodeURIComponent(
                     order.orderId
-                )}&amount=${order.amount}`,
+                )}&amount=${amount.value}`,
                 failUrl: `${window.location.origin}/charge/fail`,
             });
             // 성공 시 successUrl로 이동
@@ -171,7 +168,7 @@ function Charge() {
 
             {/* 결제수단/약관 위젯 영역 */}
             <div 
-                ref={methodsRef}
+                id="payment-method" 
                 style= {{
                     minHeight: 120,
                     padding: 12,
@@ -182,7 +179,7 @@ function Charge() {
                 }}
             />
             <div 
-                ref={agreementRef}
+                id="agreement" 
                 style={{
                     minHeight: 80,
                     padding: 12,
@@ -195,7 +192,7 @@ function Charge() {
 
             <button
                 onClick={requestPay}
-                disabled={!order || !selected || isRendering}
+                disabled={!order || !selected || isRendering || !amount}
                 style={{
                     width: "100%",
                     padding: "12px 16px",
