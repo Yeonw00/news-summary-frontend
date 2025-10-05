@@ -19,6 +19,9 @@ function Charge() {
     
     const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
 
+    const METHODS_H = 360;   // 결제수단 박스 예상 높이
+    const AGREEMENT_H = 120; // 약관 박스 예상 높이
+
     useEffect(() => {
         let mounted = true;
 
@@ -170,23 +173,27 @@ function Charge() {
             <div 
                 id="payment-method" 
                 style= {{
-                    minHeight: 120,
+                    height: METHODS_H,
+                    overflow: "hidden",
                     padding: 12,
                     border: "1px dashed #ccc",
                     borderRadius: 12,
                     marginBottom: 12,
                     background: "#fafafa",
+                    boxSizing: "border-box",
                 }}
             />
             <div 
                 id="agreement" 
                 style={{
-                    minHeight: 80,
+                    height: AGREEMENT_H,
+                    overflowY: "auto",
                     padding: 12,
                     border: "1px dashed #ccc",
                     borderRadius: 12,
                     marginBottom: 16,
                     background: "#fafafa",
+                    boxSizing: "border-box",
                 }}
             />
 

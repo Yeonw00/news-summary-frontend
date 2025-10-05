@@ -16,27 +16,30 @@ html, body, #root {
   display:flex;
   flex: 1;
   height: 100%;
-  overflow: hidden;
 }
 
 .sidebar {
   width: 250px;
   min-width: 250px;
   transition: width 0.3s ease;
-  height: 100vh;
-  position: relative;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background-color: #f2f2f2;
   padding: 10px;
   box-shadow: 2px 10px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 
 .sidebar-body {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto;
   margin-top: 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: visible;     /* ✅ 메뉴가 잘리지 않게 하기 */
   position: relative;    /* ✅ absolute 위치 기준을 잡기 위해 필요 */
 }
 
