@@ -18,29 +18,31 @@ function ChargeSuccess() {
     useEffect(() => {
         (async () => {
             try {
-                if (!paymentKey || !orderId || !amount) {
+                if (!paymentKey || !orderId || !Number.isFinite(amount))  {
                     throw new Error("잘못된 접근입니다.");
                 }
 
                 const res = await apiFetch("/api/payments/confirm", {
                     method: "POST",
-                    body: JSON.stringfy({ paymentKey, orderId, amount }),
+                    body: { paymentKey, orderId, amount },
                 });
 
                 setStatus("done");
                 setCoins(res.coinAmount ?? res.coinsAdded ?? 0);
             } catch (e) {
-                try {
-                    const err = JSON.parse(e.message);
-                    setErrorCode(err.code || "UNKNOWN");
-                    setErrorMessage(err.message || "결제 승인 중 오류가 발생했습니다.")
-                } catch {
-                    setErrorMessage(e.message || "결제 승인 중 오류가 발생했습니다.");
-                }
+                console.error("결제 승인 실패:", e);
+
+                setErrorCode(e.code || "UNKNOWN");
+                setErrorMessage(e.message || "결제 승인에 실패했습니다.");        
                 setStatus("error");
             }
+
         })();
     }, [paymentKey, orderId, amount]);
+
+    if (status === "processing") {
+        return <div style={{ padding: 24 }}>결제 승인 중...</div>
+    }
 
     if (status === "error") {
         return (
