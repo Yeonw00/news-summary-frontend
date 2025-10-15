@@ -62,9 +62,7 @@ function Charge() {
                 amount: order.amount,
                 orderId: order.orderId,
                 orderName: selected.label,
-                successUrl: `${window.location.origin}/charge/success?orderId=${encodeURIComponent(
-                    order.orderId
-                )}&amount=${order.amount}`,
+                successUrl: `${window.location.origin}/charge/success`,
                 failUrl: `${window.location.origin}/charge/fail`,
             });
             // 성공 시 successUrl로 이동

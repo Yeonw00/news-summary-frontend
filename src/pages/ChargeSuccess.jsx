@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/client";
 
@@ -14,8 +14,11 @@ function ChargeSuccess() {
     const [errorCode, setErrorCode] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [coins, setCoins] = useState(null);
+    const calledRef = useRef(false);
 
     useEffect(() => {
+        if (calledRef.current) return;
+            calledRef.current = true;
         (async () => {
             try {
                 if (!paymentKey || !orderId || !Number.isFinite(amount))  {
@@ -24,21 +27,26 @@ function ChargeSuccess() {
 
                 const res = await apiFetch("/api/payments/confirm", {
                     method: "POST",
-                    body: { paymentKey, orderId, amount },
+                    body: JSON.stringify({ paymentKey, orderId, amount }),
                 });
 
                 setStatus("done");
-                setCoins(res.coinAmount ?? res.coinsAdded ?? 0);
+                setCoins(res?.coinsAdded ?? 0);
             } catch (e) {
                 console.error("결제 승인 실패:", e);
-
-                setErrorCode(e.code || "UNKNOWN");
-                setErrorMessage(e.message || "결제 승인에 실패했습니다.");        
+                const status = e?.status || e?.response?.status;
+                const msg = e?.message || e?.response?.data?.message;
+                setErrorCode(status ?? "UNKNOWN");
+                setErrorMessage(msg ?? "결제 승인에 실패했습니다.");
                 setStatus("error");
+                const httpStatus = e?.status || e?.response?.status;
+                if (httpStatus === 401 || httpStatus === 403) {
+                    setTimeout(() => nav("/login", { replace: true, state: { from: "/charge/success" } }), 1500);
+                }
             }
 
         })();
-    }, [paymentKey, orderId, amount]);
+    }, [paymentKey, orderId, amount, nav]);
 
     if (status === "processing") {
         return <div style={{ padding: 24 }}>결제 승인 중...</div>
