@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../api/client"; 
 
 function EditProfileForm() {
     const [email, setEmail] = useState("");
@@ -9,56 +10,46 @@ function EditProfileForm() {
     const token = localStorage.getItem("token");
 
     const handleEmailChange = async () => {
-        if (!email) return alert("새 이메일을 입력해주세요.");
+        if (!email)  {
+            alert("새 이메일을 입력해주세요.");
+            return;
+        }
 
         try {
-            const res = await fetch("http://localhost:8080/api/user/me", {
-                method:"PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ email: email })
-            });
-
-            if(!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.message || "회원정보 수정 실패");
-            }
+            await apiFetch("/api/user/me", {
+                method: "PATCH",
+                body: JSON.stringify({ email }),
+            })
 
             setMessage("회원정보가 수정되었습니다.");
             setEmail("");
         } catch (err) {
-            setMessage("수정 실패: " + err.message);
+            console.error("회원정보 수정 실패:", err);
+            setMessage("수정 실패: " + (err.message || "서버 오류"));
         }
     };
 
     const handlePasswordChange = async () => {
-        if (!currentPassword || !newPassword) return alert("현재 및 새 비밀번호를 입력해주세요.");
+        if (!currentPassword || !newPassword)  {
+            alert("현재 및 새 비밀번호를 입력해주세요.");
+            return;
+        }
 
         try {
-            const res = await fetch("http://localhost:8080/api/user/me", {
+            await apiFetch("/api/user/me", {
                 method:"PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
                 body: JSON.stringify({ 
-                    currentPassword: currentPassword,
-                    newPassword: newPassword
-                 })
+                    currentPassword,
+                    newPassword,
+                 }),
             });
-
-            if(!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.message || "회원정보 수정 실패");
-            }
 
             setMessage("회원정보가 수정되었습니다.");
             setCurrentPassword("");
             setNewPassword("");
         } catch (err) {
-            setMessage("수정 실패: " + err.message);
+            console.error("비밀번호 변경 실패:", err);
+            setMessage("수정 실패: " + (err.message || "서버 오류"));
         }
     };
 

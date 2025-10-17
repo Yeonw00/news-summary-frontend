@@ -69,9 +69,16 @@ export const AuthProvider = ({children}) => {
         setIsLoggedIn(true);
     };
 
-    const logout = () => {
-        doLogoutSilent();
-    }
+    const logout = async () => {
+        try {
+            await apiFetch("/api/auth/logout", { 
+                method: "POST"
+            })
+            .catch(() => {});
+        } finally {
+            doLogoutSilent();
+        }
+    };
 
     const value = useMemo(
         () => ({ isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser, isChecking, login, logout, refresh: checkLogin}),

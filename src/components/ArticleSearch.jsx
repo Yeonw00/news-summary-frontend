@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../api/client";
 
 function ArticleSearch({selectedView, setSelectedView}) {
     const [query, setQuery] = useState("");
@@ -20,31 +21,16 @@ function ArticleSearch({selectedView, setSelectedView}) {
     const handleSearch = async () => {
         if (!query.trim()) return;
         try {
-            const res = await fetch(`http://localhost:8080/api/summary/search?keyword=${encodeURIComponent(query)}`, {
+            const data = await apiFetch(`/api/summary/search?keyword=${encodeURIComponent(query)}`, {
                 method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`
-                }
             });
 
-            const text = await res.text();
-
-            if(!res.ok) {
-                console.error("서버 응답 오류:", res.status, text);
-                return;
-            }
-
-            if (!text) {
-                setResults([]);
-                return;
-            }
-
-            const data = JSON.parse(text);
-            setResults(data);
+            setResults(data ?? []);
         } catch (err) {
             console.error("검색 실패:", err.message);
+            setResults([]);
         }
-    }
+    };
 
     const handleSelect = (requestId) => {
         navigate(`/summary/${requestId}`);

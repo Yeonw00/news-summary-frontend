@@ -9,24 +9,16 @@ import { GiTwoCoins } from "react-icons/gi";
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
-    const { setIsLoggedIn } = useAuth();
     const [balance, setBalance] = useState(null);
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const handleLogout = async() => {
         const confirmLogout = window.confirm("정말 로그아웃 하시겠습니까?");
         if (!confirmLogout) return;
 
-        const res = await fetch('http://localhost:8080/api/auth/logout', {
-            method: "POST",
-        })
-
-        if(res.ok) {
-            setIsLoggedIn(false);
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/");
-        }
+        await logout();
+        navigate("/");
     };
 
     useEffect(() => {
