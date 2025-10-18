@@ -64,3 +64,26 @@ export async function apiFetch(path, options = {}) {
     if (contentType.includes("application/json")) return res.json();
     return res.text();
 }
+
+export async function apiFetchText(url, options = {}) {
+    const token = localStorage.getItem("token");
+
+    const headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` }: {}),
+    };
+
+    const res = await fetch(url, {
+        ...options,
+        headers,
+        credentials: "include",
+    });
+
+    if(!res.ok) {
+        const errText = await res.text().catch(() => "");
+        const message = errText || `HTTP ${res.status}`;
+        throw new Error(message);
+    }
+    return res.text();
+}

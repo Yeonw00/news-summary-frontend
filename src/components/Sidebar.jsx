@@ -3,6 +3,7 @@ import "../.css";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
 import SummaryItem from "./SummaryItem";
+import { apiFetch } from "../api/client";
 
 function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView }) {
     const [isOpen, setIsOpen] = useState(true);
@@ -27,33 +28,33 @@ function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView })
     const updateTitle = async (id, newTitle) => {
         if (newTitle.trim() === "") return;
 
-        await fetch(`http://localhost:8080/api/summary/${id}/title`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": 'application/json',
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({ title: newTitle})
-        });
-
-        setEditingId(null);
-        await fetchSummaryList();
+        try {
+            await apiFetch(`/api/summary/${id}/title`, {
+                method: "PATCH",
+                body: JSON.stringify({ title: newTitle}),
+            });
+            setEditingId(null);
+            await fetchSummaryList();
+        } catch (err) {
+            console.error("제목 수정 실패:", err.message);
+            alert("제목 수정에 실패했습니다. 다시 시도해주세요.");
+        }
     };
 
     const deleteSummary = async (id) => {
-        await fetch(`http://localhost:8080/api/summary/delete/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        try {
+            await apiFetch(`/api/summary/delete/${id}`, {
+                method: "DELETE",
+            });
+            setEditingId(null);
+            await fetchSummaryList();
+
+            if(location.pathname === `/summary/${id}`) {
+                navigate("/summary");
             }
-        });
-
-        setEditingId(null);
-        await fetchSummaryList();
-
-         // 현재 경로가 해당 상세 페이지면 목록 페이지로 이동
-        if (location.pathname === `/summary/${id}`) {
-            navigate("/summary");
+        } catch (err) {
+            console.error("요약 삭제 실패:", err.message);
+            alert("삭제에 실패했습니다. 다시 시도해주세요.");
         }
     };
 

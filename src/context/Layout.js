@@ -19,6 +19,7 @@ import KakaoSuccess from "../pages/KakaoSuccess"
 import Charge from "../components/Charge";
 import ChargeSuccess from "../pages/ChargeSuccess";
 import ChargeFail from "../pages/ChargeFail";
+import { apiFetch } from "../api/client";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -26,17 +27,14 @@ function Layout() {
   const [summaries, setSummaries] = useState([]);
 
   const fetchSummaryList = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if(!token) return;
-    
-    const res = await fetch("http://localhost:8080/api/summary/list", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    });
-    if(res.ok) {
-      const data = await res.json();
-      setSummaries(data);
+    try {
+      const data = await apiFetch("/api/summary/list", {
+        method: "GET",
+      });
+      setSummaries(data ?? []);
+    } catch (err) {
+      console.error("요약 리스트 불러오기 실패:", err.message);
+      setSummaries([]);
     }
   }, []);
   

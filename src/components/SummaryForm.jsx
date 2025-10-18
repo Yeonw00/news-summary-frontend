@@ -1,36 +1,36 @@
 import { useState } from "react";
 import "../.css";
+import { apiFetchText } from "../api/client";
 
 function SummaryForm({ onSummarized }) {
-      const [url, setUrl] = useState('');
-      const [content, setContent] = useState('');
-      const [summary, setSummary] = useState('');
+    const [url, setUrl] = useState('');
+    const [content, setContent] = useState('');
+    const [summary, setSummary] = useState('');
 
-      const handleSubmit = async () => {
-        setSummary('');
-
-        
-        const response = await fetch('http://localhost:8080/api/summary/openai', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("token")}`
-          },
-          body: JSON.stringify({
-                    originalUrl: url,
-                    originalContent: content
-                }),
-        });
-    
-        const text = await response.text();
-        setSummary(text);
-
-        // 요약 성공 후 리스트 다시 불러오기
-        if (onSummarized) {
-        onSummarized();
+    const handleSubmit = async () => {
+        if(!url?.trim() && !content?.trim()) {
+            alert("URL 또는 본문을 입력하세요.");
+            return;
         }
 
-      };
+        try {
+            setSummary("");
+
+            const text = await apiFetchText("/api/summary/openai", {
+                method: "POST",
+                body: JSON.stringify({
+                    originalUrl: url,
+                    originalContent: content,
+                }),
+            });
+            setSummary(text ?? "");
+
+            if (onSummarized) onSummarized();
+        } catch (err) {
+            console.error("요약 실패:", err);
+            setSummary("요약 생성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    };
     return (
         <div className="summary-container">
             <h1 className="summary-title">뉴스 요약기</h1>
