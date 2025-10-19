@@ -7,8 +7,6 @@ function EditProfileForm() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    const token = localStorage.getItem("token");
-
     const handleEmailChange = async () => {
         if (!email)  {
             alert("새 이메일을 입력해주세요.");
