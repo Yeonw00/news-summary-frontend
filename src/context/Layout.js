@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../api/client";
 import RegisterForm from "../components/RegisterForm";
 import LoginForm from "../components/LoginForm";
 import SummaryForm from "../components/SummaryForm";
@@ -19,7 +20,8 @@ import KakaoSuccess from "../pages/KakaoSuccess"
 import Charge from "../components/Charge";
 import ChargeSuccess from "../pages/ChargeSuccess";
 import ChargeFail from "../pages/ChargeFail";
-import { apiFetch } from "../api/client";
+import CoinHistoryPage from "../components/CoinHistoryPage";
+
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
@@ -72,6 +74,7 @@ function Layout() {
             <Route path="kakao-success" element={<KakaoSuccess />} />
             <Route path="/charge/success" element={<ChargeSuccess />} />
             <Route path="/charge/fail" element={<ChargeFail />} />
+            <Route path="/coins/history" element={<CoinHistoryPage />} />
             <Route 
               path="/summary" 
               element={
