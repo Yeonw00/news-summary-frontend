@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 
 const TYPE_OPTIONS = [
@@ -24,10 +24,10 @@ function CoinHistoryPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const loadData = async (pageToLoad = 0) => {
+    const loadData = useCallback ( async (pageToLoad = 0) => {
         setLoading(true);
         try {
-            const params = new URLSearchparams();
+            const params = new URLSearchParams();
             params.set("page", pageToLoad);
             params.set("size", size);
             if (type) params.set("type", type);
@@ -44,11 +44,11 @@ function CoinHistoryPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [type, from, to, size]);
 
     useEffect(() => {
         loadData(0);
-    }, []);
+    }, [loadData]);
 
     const handleSearch = () => {
         loadData(0);
@@ -57,6 +57,43 @@ function CoinHistoryPage() {
     const handlePageChange =(newPage) => {
         if (newPage < 0 || newPage >= totalPages) return;
         loadData(newPage);
+    };
+
+    const downloadLedger = async (format) => {
+        try {
+            const params = new URLSearchParams();
+            if (type) params.set("type", type);
+            if (from) params.set("from", from);
+            if (to) params.set("to", to);
+            params.set("format", format); // EXCEL or PDF
+
+            const url = `/api/wallet/ledger/export?${params.toString()}`;
+
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            if (!res.ok) {
+                alert("정산 내역 다운로드 중 오류가 발생했습니다.");
+                return;
+            }
+
+            const blob = await res.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = downloadUrl;
+            a.download = format === "PDF" ? "coin-ledger.pdf" : "coin-ledger.xlsx";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (err) {
+            console.error(err);
+            alert("정산 내역 다운로드에 실패했습니다.");
+        }
     };
 
     return (
@@ -123,6 +160,18 @@ function CoinHistoryPage() {
                     </tbody>
                 </table>
             )}
+
+            <div style={{ margin: "8px 0" }}>
+                <button onClick={() => downloadLedger("EXCEL")}>
+                    엑셀로 다운로드
+                </button>
+                <button 
+                    onClick={() => downloadLedger("PDF")} 
+                    style={{ marginLeft: "8px" }}
+                >
+                    PDF로 다운로드
+                </button>
+            </div>
 
             {totalPages > 1 && (
                 <div className="pagination">

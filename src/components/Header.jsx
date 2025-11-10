@@ -62,6 +62,9 @@ function Header() {
                             <button onClick={() => { navigate("/charge"); setMenuOpen(false);}}>
                                 결제하기
                             </button>
+                            <button onClick={() => { navigate("/coins/history"); setMenuOpen(false)}}> 
+                                코인 사용 내역
+                            </button>
                         </div>
                     )}
                 </div>
