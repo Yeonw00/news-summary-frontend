@@ -99,7 +99,7 @@ function CoinHistoryPage() {
     return (
         <div className="container">
             <h2>코인 사용 내역</h2>
-
+            <br />
             <div className="filters">
                 <label>
                     유형:
@@ -125,10 +125,11 @@ function CoinHistoryPage() {
                         onChange={(e) => setTo(e.target.value)}
                     />
                 </label>
-                <button onClick={handleSearch} disabled={loading}>
-                        검색
+                <button className="btn-primary" onClick={handleSearch} disabled={loading}>
+                    검색
                 </button>
             </div>
+            <br />
 
             {loading ? (
                 <p>불러오는 중...</p>
@@ -161,11 +162,13 @@ function CoinHistoryPage() {
                 </table>
             )}
 
-            <div style={{ margin: "8px 0" }}>
-                <button onClick={() => downloadLedger("EXCEL")}>
+            <br />
+
+            <div className="button-group">
+                <button className="btn-secondary" onClick={() => downloadLedger("EXCEL")}>
                     엑셀로 다운로드
                 </button>
-                <button 
+                <button className="btn-secondary"
                     onClick={() => downloadLedger("PDF")} 
                     style={{ marginLeft: "8px" }}
                 >
@@ -174,12 +177,12 @@ function CoinHistoryPage() {
             </div>
 
             {totalPages > 1 && (
-                <div className="pagination">
-                    <button onClick={() => handlePageChange(page -1)} disabled={page <= 0}>
+                <div className="button-group pagination">
+                    <button className="btn-ghost" onClick={() => handlePageChange(page -1)} disabled={page <= 0}>
                         이전
                     </button>
                     <span>{page + 1} / {totalPages}</span>
-                    <button onClick={() => handlePageChange(page + 1)} disabled={page >= totalPages -1}>
+                    <button className="btn-ghost" onClick={() => handlePageChange(page + 1)} disabled={page >= totalPages -1}>
                         다음
                     </button>
                 </div>
