@@ -60,7 +60,7 @@ function Header() {
                                 회원정보 수정
                             </button>
                             <button onClick={() => { navigate("/charge"); setMenuOpen(false);}}>
-                                결제하기
+                                코인 충전
                             </button>
                             <button onClick={() => { navigate("/coins/history"); setMenuOpen(false)}}> 
                                 코인 사용 내역
