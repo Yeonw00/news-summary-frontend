@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 function ChargeSuccess() {
-    const { search } = useLocation();
+    const { search, pathname } = useLocation();
     const nav = useNavigate();
+    const { isChecking, isLoggedIn } = useAuth();
+
     const qs = new URLSearchParams(search);
     const paymentKey = qs.get("paymentKey");
     const orderId = qs.get("orderId");
@@ -18,7 +21,13 @@ function ChargeSuccess() {
 
     useEffect(() => {
         if (calledRef.current) return;
-            calledRef.current = true;
+        if (isChecking) return;
+        if (!isLoggedIn) {
+            nav(`/login?returnUrl=${encodeURIComponent(pathname + search)}`, {replace: true});
+            return;
+        }
+
+        calledRef.current = true;
         (async () => {
             try {
                 if (!paymentKey || !orderId || !Number.isFinite(amount))  {
@@ -39,14 +48,9 @@ function ChargeSuccess() {
                 setErrorCode(status ?? "UNKNOWN");
                 setErrorMessage(msg ?? "결제 승인에 실패했습니다.");
                 setStatus("error");
-                const httpStatus = e?.status || e?.response?.status;
-                if (httpStatus === 401 || httpStatus === 403) {
-                    setTimeout(() => nav("/login", { replace: true, state: { from: "/charge/success" } }), 1500);
-                }
             }
-
         })();
-    }, [paymentKey, orderId, amount, nav]);
+    }, [isChecking, isLoggedIn, paymentKey, orderId, amount, nav, pathname, search]);
 
     if (status === "processing") {
         return <div style={{ padding: 24 }}>결제 승인 중...</div>
