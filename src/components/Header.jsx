@@ -9,9 +9,8 @@ import { GiTwoCoins } from "react-icons/gi";
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
-    const [balance, setBalance] = useState(null);
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, balance } = useAuth();
 
     const handleLogout = async() => {
         const confirmLogout = window.confirm("정말 로그아웃 하시겠습니까?");
@@ -31,12 +30,6 @@ function Header() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [])
 
-    useEffect(() => {
-        apiFetch("/api/wallet/me")
-        .then(d => setBalance(d.balance))
-        .catch(() => {});
-    }, []);
-
     return (
         <header className="main-header">
             <div className="logo" onClick={() => navigate("/")}>
@@ -47,7 +40,7 @@ function Header() {
                 <div className="dropdown" ref={menuRef}>
                     <div style={{ display: "flex", alignItems: "center", fontSize: "17px" }}>
                         <GiTwoCoins size={28} style={{ color: "gold", marginRight: "4px" }} />
-                        {balance ?? "-"}{" "}
+                        {balance === null || balance === undefined ? "-" : balance.toLocaleString()}{" "}
                     </div>
                     <User 
                         className="user-icon"

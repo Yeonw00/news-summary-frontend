@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 function ChargeSuccess() {
     const { search, pathname } = useLocation();
     const nav = useNavigate();
-    const { isChecking, isLoggedIn } = useAuth();
+    const { isChecking, isLoggedIn, refreshBalance } = useAuth();
 
     const qs = new URLSearchParams(search);
     const paymentKey = qs.get("paymentKey");
@@ -40,7 +40,9 @@ function ChargeSuccess() {
                 });
 
                 setStatus("done");
-                setCoins(res?.coinsAdded ?? 0);
+                setCoins(res?.grantedCoins ?? 0);
+
+                await refreshBalance();
             } catch (e) {
                 console.error("결제 승인 실패:", e);
                 const status = e?.status || e?.response?.status;
@@ -50,7 +52,7 @@ function ChargeSuccess() {
                 setStatus("error");
             }
         })();
-    }, [isChecking, isLoggedIn, paymentKey, orderId, amount, nav, pathname, search]);
+    }, [isChecking, isLoggedIn, paymentKey, orderId, amount, nav, pathname, search, refreshBalance]);
 
     if (status === "processing") {
         return <div style={{ padding: 24 }}>결제 승인 중...</div>

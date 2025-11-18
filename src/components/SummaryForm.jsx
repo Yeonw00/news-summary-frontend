@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "../.css";
 import { apiFetchText } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 function SummaryForm({ onSummarized }) {
+    const { refreshBalance } = useAuth();
     const [url, setUrl] = useState('');
     const [content, setContent] = useState('');
     const [summary, setSummary] = useState('');
@@ -26,6 +28,8 @@ function SummaryForm({ onSummarized }) {
             setSummary(text ?? "");
 
             if (onSummarized) onSummarized();
+
+            await refreshBalance();
         } catch (err) {
             console.error("요약 실패:", err);
             setSummary("요약 생성에 실패했습니다. 잠시 후 다시 시도해주세요.");

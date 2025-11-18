@@ -7,12 +7,23 @@ export const AuthProvider = ({children}) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
+    const [balance, setBalance] = useState(0);
 
     const doLogoutSilent = useCallback(() => {
         setIsLoggedIn(false);
         setCurrentUser(null);
+        setBalance(0);
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+    }, []);
+
+    const refreshBalance = useCallback(async () => {
+        try {
+            const data = await apiFetch("/api/wallet/me", { method: "GET" });
+            setBalance(data.balance ?? 0);
+        } catch (e) {
+            console.error("잔액 조회 실패:", e);
+        }
     }, []);
 
     const checkLogin = useCallback(async () => {
@@ -29,18 +40,20 @@ export const AuthProvider = ({children}) => {
             if (data?.loggedIn) {
                 if (data.user) {
                     setCurrentUser(data.user);
+                    setIsLoggedIn(true);
                     localStorage.setItem("user", JSON.stringify(data.user));
                 }
-                setIsLoggedIn(true);
+                await refreshBalance();
             } else {
                 doLogoutSilent();
             }
-        } catch {
+        } catch (e) {
+            console.error("checkLogin 실패:", e);
             doLogoutSilent();
         } finally {
             setIsChecking(false);
         }
-    }, [doLogoutSilent]);
+    }, [doLogoutSilent, refreshBalance]);
 
     const login = useCallback((userObj, token) => {
         if (token) localStorage.setItem("token", token);
@@ -82,10 +95,12 @@ export const AuthProvider = ({children}) => {
             setCurrentUser, 
             isChecking, 
             login,
-            logout, 
+            logout,
+            balance,
+            refreshBalance, 
             refresh: checkLogin
         }),
-        [isLoggedIn, currentUser, isChecking, login, logout, checkLogin]
+        [isLoggedIn, currentUser, isChecking, login, logout, checkLogin, balance, refreshBalance]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
