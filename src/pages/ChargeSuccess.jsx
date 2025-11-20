@@ -72,10 +72,12 @@ function ChargeSuccess() {
     }
 
     return (
-        <div style={{ padding: 24 }}>
+        <div style={{ "justify-content": "center", "align-items": "center", "text-align": "center", padding: 24 }}>
             <h2>결제 성공</h2>
+            <br />
             <p>코인 {coins ?? 0}개가 충전되었습니다.</p>
-            <button onClick={() => nav("/")}>홈으로</button>
+            <br />
+            <button className="home-button" onClick={() => nav("/")}>Home</button>
         </div>
     );
 }
