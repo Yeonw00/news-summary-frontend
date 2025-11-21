@@ -23,26 +23,27 @@ export const AuthProvider = ({children}) => {
             setBalance(data.balance ?? 0);
         } catch (e) {
             console.error("잔액 조회 실패:", e);
+            setBalance(0);
         }
     }, []);
 
     const checkLogin = useCallback(async () => {
         setIsChecking(true);
         try {
-            const savedUser = localStorage.getItem("user");
-            if (savedUser) {
-                const parsed = JSON.parse(savedUser);
-                setCurrentUser(parsed);
-                setIsLoggedIn(true);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                doLogoutSilent();
+                setIsChecking(false);
+                return;
             }
 
             const data = await apiFetch("/api/auth/check", { method: "GET" });
             if (data?.loggedIn) {
-                if (data.user) {
-                    setCurrentUser(data.user);
-                    setIsLoggedIn(true);
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                }
+                setCurrentUser(data.user);
+                setIsLoggedIn(true);
+
+                localStorage.setItem("user", JSON.stringify(data.user));
+                
                 await refreshBalance();
             } else {
                 doLogoutSilent();
@@ -55,12 +56,14 @@ export const AuthProvider = ({children}) => {
         }
     }, [doLogoutSilent, refreshBalance]);
 
-    const login = useCallback((userObj, token) => {
+    const login = useCallback(async(userObj, token) => {
         if (token) localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(userObj));
         setCurrentUser(userObj);
         setIsLoggedIn(true);
-    }, []);
+
+        await refreshBalance();
+    }, [refreshBalance]);
 
     const logout = useCallback (async () => {
         try {

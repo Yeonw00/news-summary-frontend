@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function LoginForm() {
-    const { setIsLoggedIn } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -26,9 +26,11 @@ function LoginForm() {
             if(response.ok) {
                 const data = await response.json();
 
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("user", JSON.stringify({ username: data.username }))
-                setIsLoggedIn(true);
+                await login(
+                    data.user,
+                    data.token
+                );
+
                 navigate("/summary");
             } else {
                 const data = await response.json();
