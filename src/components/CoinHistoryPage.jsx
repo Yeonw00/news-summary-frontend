@@ -4,14 +4,24 @@ import { apiFetch } from "../api/client";
 const TYPE_OPTIONS = [
   { value: "", label: "전체" },
   { value: "CHARGE", label: "충전" },
-  { value: "SPEND", label: "사용" },
+  { value: "USE", label: "사용" },
   { value: "REFUND", label: "환불" },
   { value: "SIGNUP_BONUS", label: "가입 보너스" },
 ];
 
-function formatDelta(type, delta) {
-  const prefix = delta > 0 ? "+" : "";
-  return `${prefix}${delta.toLocaleString()} 코인`;
+function formatDelta(type, amount) {
+    if (amount == null) return "-";
+
+    let signed = amount;
+
+    if (type ==="USE") {
+        signed = -Math.abs(amount);
+    } else {
+        signed = Math.abs(amount);
+    }
+
+  const prefix = signed > 0 ? "+" : "";
+  return `${prefix}${signed.toLocaleString()} 코인`;
 }
 
 function CoinHistoryPage() {
@@ -38,9 +48,13 @@ function CoinHistoryPage() {
                 method: "GET",
             });
 
-            setItems(data.content || []);
-            setPage(data.page);
-            setTotalPages(data.totalPages);
+            setItems(data.items || []);
+            setPage(data.page ?? 0);
+
+            const totalCount = data.totalCount ?? 0;
+            const pageSize = data.size ?? size;
+            const pages = pageSize > 0 ? Math.ceil(totalCount / pageSize) : 1;
+            setTotalPages(pages);
         } finally {
             setLoading(false);
         }
@@ -150,12 +164,12 @@ function CoinHistoryPage() {
                     <tbody>
                         {items.map((row) => (
                             <tr key={row.id}>
-                                <td>{row.createdAt?.replace("T", " ")}</td>
+                                <td>{row.createdAt ? row.createdAt.replace("T", " ") : "-"}</td>
                                 <td>{row.type}</td>
-                                <td>{formatDelta(row.type, row.delta)}</td>
-                                <td>{row.balanceAfter.toLocaleString()}</td>
+                                <td>{formatDelta(row.type, row.amount)}</td>
+                                <td>{(row.balanceAfter ?? 0).toLocaleString()}</td>
                                 <td>{row.description}</td>
-                                <td>{row.orderUid ?? "-"}</td>
+                                <td>{row.orderId ?? "-"}</td>
                             </tr>
                         ))}
                     </tbody>
