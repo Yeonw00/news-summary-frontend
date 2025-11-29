@@ -125,7 +125,22 @@ function CoinRefundPage() {
                 </p>
              </div>
 
-             
+             <div style={StyleSheet.layout}>
+                <div style={StyleSheet.leftColumn}>
+                    <section style={StyleSheet.card}>
+                        <h2 style={StyleSheet.cardTitle}>보유 코인</h2>
+                        <p style={StyleSheet.balanceText}>
+                            현재 잔액{" "}
+                            <strong>{balance == null ? "-" : `${formatNumber(balance)} 코인`}</strong>
+                        </p>
+                        {balance === 0 && (
+                            <p style={StyleSheet.helperText}>
+                                환불 가능한 코인이 없습니다. 코인 충전 후 이용해주세요.
+                            </p>
+                        )}
+                    </section>
+                </div>
+             </div>
         </div>
     );
 }
