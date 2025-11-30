@@ -139,7 +139,111 @@ function CoinRefundPage() {
                             </p>
                         )}
                     </section>
+
+                    <section style={StyleSheet.card}>
+                        <h2 style={StyleSheet.cardTitle}>환불 정보 입력</h2>
+
+                        <form onSubmit={handleSubmit} style={StyleSheet.form}>
+                            <label style={StyleSheet.label}>
+                                환불할 코인 수
+                                <div style={StyleSheet.amountRow}>
+                                    <input 
+                                        type="number"
+                                        min="1"
+                                        step="1"
+                                        value={refundAmount}
+                                        onChange={(e) => setRefundAmount(e.target.value)}
+                                        placeholder="예: 1000"
+                                        style={StyleSheet.input}
+                                        disabled={isFormDisabled}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleFillAll}
+                                        style={StyleSheet.smallButton}
+                                        disabled={isFormDisabled || balance == null || balance <= 0}
+                                    >
+                                        전체
+                                    </button>
+                                </div>
+                                <span style={StyleSheet.helperText}>
+                                    보유 코인: {balance == null ? "-" : `${formatNumber(balance)} 코인`}
+                                </span>
+                            </label>
+
+                            <label style={StyleSheet.labe}> 
+                                환불 사유
+                                <textarea 
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="예: 서비스 사용 중단으로 인한 잔여 코인 환불 요청"
+                                    rows={3}
+                                    style={StyleSheet.textarea}
+                                    disabled={isFormDisabled}
+                                />
+                            </label>
+
+                            <div style={StyleSheet.fieldGroup}>
+                                <label style={StyleSheet.label}>
+                                    은행명
+                                    <input 
+                                        type="text"
+                                        value={bankName}
+                                        onChange={(e) => setBankName(e.target.value)}
+                                        placeholder="예: 국민은행"
+                                        style={StyleSheet.input}
+                                        disabled={isFormDisabled}
+                                    />
+                                </label>
+                                <label style={StyleSheet.label}>
+                                    예금주
+                                    <input 
+                                        type="text"
+                                        value={accountHolder}
+                                        onChange={(e) => setAccountHolder(e.target.value)}
+                                        placeholder="예: 홍길동"
+                                        style={StyleSheet.input}
+                                        disabled={isFormDisabled}
+                                    />
+                                </label>
+                            </div>
+                            
+                            <label style={StyleSheet.label}>
+                                계좌번호
+                                <input 
+                                    type="text"
+                                    value={accountNumber}
+                                    onChange={(e) => setAccountNumber(e.target.value)}
+                                    placeholder="예 123456-01-234567"
+                                    style={StyleSheet.input}
+                                    disabled={isFormDisabled}
+                                />
+                            </label>
+
+                            <p style={StyleSheet.noticeText}>
+                                . 결제 수단에 따라 실제 입금까지 시간이 걸릴 수 있습니다.
+                                <br />
+                                . 부정 이용이 의심되는 경우 환불이 제한될 수 있습니다.
+                            </p>
+
+                            {error && <p style={StyleSheet.errorText}>{error}</p>}
+                            {successMessage && <p style={StyleSheet.successText}>{successMessage}</p>}
+
+                            <button
+                                type="submit"
+                                style= {{
+                                    ...StyleSheet.submitButton,
+                                    ...(isFormDisabled ? StyleSheet.submitButtonDisabled : {}),
+                                }}
+                                disabled={isFormDisabled}
+                            >
+                                {isSubmitting ? "환불 신청 중..." : "환불 신청하기"}
+                            </button>
+                        </form>
+                    </section>
                 </div>
+
+                
              </div>
         </div>
     );
