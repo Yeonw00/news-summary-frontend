@@ -243,7 +243,43 @@ function CoinRefundPage() {
                     </section>
                 </div>
 
-                
+                <div style={StyleSheet.rightColumn}>
+                    <section style={StyleSheet.card}>
+                        <h2 style={StyleSheet.cardTitle}>최근 환불 내역</h2>
+                        {isLoading ? (
+                            <p style={styles.helperText}>불러오는 중...</p>
+                        ) : refunds && refunds.length > 0 ? (
+                        <div style={styles.tableWrapper}>
+                            <table style={styles.table}>    
+                                <thead>
+                                    <tr>
+                                        <th style={styles.th}>신청일</th>
+                                        <th style={styles.th}>금액</th>
+                                        <th style={styles.th}>상태</th>
+                                        <th style={styles.th}>사유</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {refunds.map((item) => (
+                                        <tr key={item.id ?? `${item.createdAt}-${item.amount}`}>
+                                            <td style={styles.td}>{formatDate(item.createdAt)}</td>
+                                            <td style={styles.td}>
+                                                {item.amount != null ? `${formatNumber(item.amount)} 코인` : "-"}
+                                            </td>
+                                            <td style={styles.td}>{item.status ?? "-"}</td>
+                                            <td style={styles.td}>
+                                                <span style={styles.reasonCell}>{item.reason ?? "-"}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        ) : (
+                            <p style={styles.helperText}>등록된 환불 내역이 없습니다.</p>
+                        )}
+                    </section>
+                </div>
              </div>
         </div>
     );
