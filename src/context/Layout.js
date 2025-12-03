@@ -21,6 +21,7 @@ import Charge from "../components/Charge";
 import ChargeSuccess from "../pages/ChargeSuccess";
 import ChargeFail from "../pages/ChargeFail";
 import CoinHistoryPage from "../components/CoinHistoryPage";
+import CoinRefundPage from "../components/CoinRefundPage";
 
 
 function Layout() {
@@ -75,6 +76,7 @@ function Layout() {
             <Route path="/charge/success" element={<ChargeSuccess />} />
             <Route path="/charge/fail" element={<ChargeFail />} />
             <Route path="/coins/history" element={<CoinHistoryPage />} />
+            <Route path="/coins/refund" element={<CoinRefundPage />} />
             <Route 
               path="/summary" 
               element={
