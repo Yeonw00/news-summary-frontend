@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../api/client";
 
 function formatNumber(value) {
     if (value == null) return "-";
@@ -14,12 +15,9 @@ function formatDate(value) {
 
 function CoinRefundPage() {
     const [balance, setBalance] = useState(null);
-    const [refundAmount, setRefundAmount] = useState("");
+    const [orders, setOrders] = useState([]); // 환불 가능 결제건
     const [reason, setReason] = useState("");
-    const [bankName, setBankName] = useState("");
-    const [accountNumber, setAccountNumber] = useState("");
-    const [accountHolder, setAccountHolder] = useState("");
-    const [refunds, setRefunds] = useState([]);
+    const [selectedId, setSelectedId] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,30 +42,13 @@ function CoinRefundPage() {
         loadData();
     }, [loadData]);
 
-    const handleFillAll = () => {
-        if (balance != null) {
-            setRefundAmount(String(balance));
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefualt();
         setError("");
         setSuccessMessage("");
 
-        if (balance == null) {
-            setError("잔액 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
-            return;
-        }
-
-        const parsedAmount = Number(refundAmount);
-        if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
-            setError("환불할 코인 수를 0보다 크게 입력해주세요.");
-            return;
-        }
-
-        if (parsedAmount > balance) {
-            setError("환불 금액이 보유 코인보다 많습니다.");
+        if (!selectedId) {
+            setError("환불할 결제건을 선택해주세요.");
             return;
         }
 
@@ -76,33 +57,16 @@ function CoinRefundPage() {
             return;
         }
 
-        if (!bankName.trim() || !accountNumber.trim() || !accountHolder.trim()) {
-            setError("환불 계좌 정보를 모두 입력해주세요.");
-            return;
-        }
-
         setIsSubmitting(true);
         try {
-            const payload = {
-                amount: parsedAmount,
-                reason: reason.trim(),
-                bankName: bankName.trim(),
-                accountNumber: accountNumber.trim(),
-                accountHolder: accountHolder.trim(),
-            };
-
             await apiFetch(`/api/wallet/refund/${orderUid}`, {
                 method: "POST",
-                body: JSON.stringify(payload),
+                body: JSON.stringify({ reason: reason.trim() }),
             });
 
             setSuccessMessage("환불 신청이 접수되었습니다.");
-            setRefundAmount("");
             setReason("");
-            setBankName("");
-            setAccountNumber("");
-            setAccountHolder("");
-
+            setSelectedId(null);
             await loadData();
         } catch (e) {
             console.error(e);
@@ -112,177 +76,127 @@ function CoinRefundPage() {
         }
     };
 
-    const isFormDisabled = isLoading || isSubmitting || !balance || balance <= 0;
-
     return (
         <div className="refund-page">
              <div className="refund-header">
                 <h1 className="refund-title">코인 환불 신청</h1>
                 <p className="refund-subtitle">
-                    남은 코인을 계좌로 환불 신청할 수 있습니다.
-                    <br />
-                    환불 처리에는 영업일 기준 일정 시간이 소요될 수 있습니다.
+                     Toss 결제 취소를 통해, <strong>코인이 전혀 사용되지 않은 결제건</strong>만 환불이 가능합니다.
                 </p>
              </div>
+            <section className="refund-card">
+                <h2 className="refund-cardTitle">보유 코인</h2>
+                <p className="refund-balanceText">
+                    현재 잔액{" "}
+                    <strong>
+                        {balance == null ? "-" : `${formatNumber(balance)} 코인`}
+                    </strong>
+                </p>
+            </section>
 
-             <div className="refund-layout">
+            <div className="refund-layout">
                 <div className="refund-leftColumn">
                     <section className="refund-card">
-                        <h2 className="refund-cardTitle">보유 코인</h2>
-                        <p className="refund-balanceText">
-                            현재 잔액{" "}
-                            <strong>{balance == null ? "-" : `${formatNumber(balance)} 코인`}</strong>
-                        </p>
-                        {balance === 0 && (
+                        <h2 className="refund-cardTitle">환불 가능한 결제 내역</h2>
+                        {isLoading ? (
+                            <p className="refund-helperText">불러오는 중...</p>    
+                        ) : orders.length === 0? (
                             <p className="refund-helperText">
-                                환불 가능한 코인이 없습니다. 코인 충전 후 이용해주세요.
-                            </p>
-                        )}
-                    </section>
-
-                    <section className="refund-card">
-                        <h2 className="refund-cardTitle">환불 정보 입력</h2>
-
-                        <form onSubmit={handleSubmit} className="refund-form">
-                            <label className="refund-label">
-                                환불할 코인 수
-                                <div className="refund-amountRow">
-                                    <input 
-                                        type="number"
-                                        min="1"
-                                        step="1"
-                                        value={refundAmount}
-                                        onChange={(e) => setRefundAmount(e.target.value)}
-                                        placeholder="예: 1000"
-                                        className="refund-input"
-                                        disabled={isFormDisabled}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={handleFillAll}
-                                        className="refund-smallButton"
-                                        disabled={isFormDisabled || balance == null || balance <= 0}
-                                    >
-                                        전체
-                                    </button>
-                                </div>
-                                <span className="refund-helperText">
-                                    보유 코인: {balance == null ? "-" : `${formatNumber(balance)} 코인`}
-                                </span>
-                            </label>
-
-                            <label className="refund-label"> 
-                                환불 사유
-                                <textarea 
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                    placeholder="예: 서비스 사용 중단으로 인한 잔여 코인 환불 요청"
-                                    rows={3}
-                                    className="refund-textarea"
-                                    disabled={isFormDisabled}
-                                />
-                            </label>
-
-                            <div className="refund-fieldGroup">
-                                <label className="refund-label">
-                                    은행명
-                                    <input 
-                                        type="text"
-                                        value={bankName}
-                                        onChange={(e) => setBankName(e.target.value)}
-                                        placeholder="예: 국민은행"
-                                        className="refund-input"
-                                        disabled={isFormDisabled}
-                                    />
-                                </label>
-                                <label className="refund-label">
-                                    예금주
-                                    <input 
-                                        type="text"
-                                        value={accountHolder}
-                                        onChange={(e) => setAccountHolder(e.target.value)}
-                                        placeholder="예: 홍길동"
-                                        className="refund-input"
-                                        disabled={isFormDisabled}
-                                    />
-                                </label>
-                            </div>
-                            
-                            <label className="refund-label">
-                                계좌번호
-                                <input 
-                                    type="text"
-                                    value={accountNumber}
-                                    onChange={(e) => setAccountNumber(e.target.value)}
-                                    placeholder="예 123456-01-234567"
-                                    className="refund-input"
-                                    disabled={isFormDisabled}
-                                />
-                            </label>
-
-                            <p className="refund-noticeText">
-                                . 결제 수단에 따라 실제 입금까지 시간이 걸릴 수 있습니다.
+                                환불 가능한 코인이 없습니다.
                                 <br />
-                                . 부정 이용이 의심되는 경우 환불이 제한될 수 있습니다.
+                                이미 사용된 코인이 포함된 결제건은 환불이 불가합니다.
                             </p>
-
-                            {error && <p className="refund-errorText">{error}</p>}
-                            {successMessage && <p className="refund-successText">{successMessage}</p>}
-
-                            <button
-                                type="submit"
-                                className= {{
-                                    ...refund-submitButton,
-                                    ...(isFormDisabled ? StyleSheet.submitButtonDisabled : {}),
-                                }}
-                                disabled={isFormDisabled}
-                            >
-                                {isSubmitting ? "환불 신청 중..." : "환불 신청하기"}
-                            </button>
-                        </form>
+                        ) : (
+                            <div className="refund-tableWrapper">
+                                <table className="refund-table">
+                                <thead>
+                                    <tr>
+                                        <th className="refund-th">선택</th>
+                                        <th className="refund-th">결제일시</th>
+                                        <th className="refund-th">상품명</th>
+                                        <th className="refund-th">충전 코인</th>
+                                        <th className="refund-th">결제 금액</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((o) => (
+                                    <tr key={o.id}>
+                                        <td className="refund-td">
+                                            <input
+                                                type="radio"
+                                                name="order"
+                                                checked={selectedId === o.id}
+                                                onChange={() => setSelectedId(o.id)}
+                                            />
+                                        </td>
+                                        <td className="refund-td">{formatDate(o.paidAt)}</td>
+                                        <td className="refund-td">{o.productName ?? "-"}</td>
+                                        <td className="refund-td">
+                                        {o.chargedCoins != null
+                                            ? `${formatNumber(o.chargedCoins)} 코인`
+                                            : "-"}
+                                        </td>
+                                        <td className="refund-td">
+                                        {o.paidAmount != null
+                                            ? `${formatNumber(o.paidAmount)} 원`
+                                            : "-"}
+                                        </td>
+                                    </tr>
+                                    ))}
+                                </tbody>
+                                </table>
+                            </div>
+                        )}
                     </section>
                 </div>
 
                 <div className="refund-rightColumn">
                     <section className="refund-card">
-                        <h2 className="refund-cardTitle">최근 환불 내역</h2>
-                        {isLoading ? (
-                            <p className="refund-helperText">불러오는 중...</p>
-                        ) : refunds && refunds.length > 0 ? (
-                        <div className="refund-tableWrapper">
-                            <table className="refund-table">    
-                                <thead>
-                                    <tr>
-                                        <th className="refund-th">신청일</th>
-                                        <th className="refund-th">금액</th>
-                                        <th className="refund-th">상태</th>
-                                        <th className="refund-th">사유</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {refunds.map((item) => (
-                                        <tr key={item.id ?? `${item.createdAt}-${item.amount}`}>
-                                            <td className="refund-td">{formatDate(item.createdAt)}</td>
-                                            <td className="refund-td">
-                                                {item.amount != null ? `${formatNumber(item.amount)} 코인` : "-"}
-                                            </td>
-                                            <td className="refund-td">{item.status ?? "-"}</td>
-                                            <td className="refund-td">
-                                                <span className="refund-reasonCell">{item.reason ?? "-"}</span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        ) : (
-                            <p className="refund-helperText">등록된 환불 내역이 없습니다.</p>
-                        )}
+                        <h2 className="refund-cardTitle">환불 신청</h2>
+                        <form onSubmit={handleSubmit} className="refund-form">
+                            <label className="refund-label">
+                                환불 사유
+                                <textarea
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="예: 더 이상 서비스를 사용하지 않아 잔여 코인 환불을 요청합니다."
+                                    rows={4}
+                                    className="refund-textarea"
+                                    disabled={isSubmitting}
+                                />
+                            </label>
+
+                            <p sclassName="refund-noticeText">
+                                · 선택한 결제건의 전체 금액이 Toss 결제 취소로 환불됩니다.
+                                <br />
+                                · 해당 결제건에서 코인이 한 번이라도 사용된 경우 환불이 불가능합니다.
+                                <br />
+                                · 환불 완료 시, 충전되었던 코인만큼 코인 잔액에서 차감됩니다.
+                            </p>
+
+                            {error && <p className="refund-errorText">{error}</p>}
+                            {successMessage && (
+                                <p className="refund-successText">{successMessage}</p>
+                            )}
+
+                            <button
+                                type="submit"
+                                className= {{
+                                    ...refund-submitButton,
+                                    ...(isSubmitting ? refund-submitButtonDisabled : {}),
+                                }}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "환불 처리 중..." : "선택한 결제건 환불 신청"}
+                            </button>
+                        </form>
                     </section>
                 </div>
-             </div>
+            </div>
         </div>
     );
 }
+
+                
 
 export default CoinRefundPage;
