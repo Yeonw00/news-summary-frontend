@@ -641,194 +641,193 @@ html, body, #root {
   white-space: nowrap;
 }
 
-.refund-page: {
-    padding: "24px",
-    maxWidth: "1080px",
-    margin: "0 auto",
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    color: "#111827",
+.refund-page {
+    padding: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+    color: #111827;
 }
 
-.refund-header: {
-    marginBottom: "24px",
+.refund-header {
+    margin-bottom: 24px;
 }
 
-.refund-title: {
-    fontSize: "24px",
-    fontWeight: 700,
-    marginBottom: "8px",
+.refund-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.refund-subtitle: {
-    fontSize: "14px",
-    color: "#6B7280",
-    lineHeight: 1.5,
+.refund-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+    line-height: 1.5;
 }
 
-.refund-layout: {
-    display: "flex",
-    gap: "16px",
-    alignItems: "flex-start",
+.refund-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
 }
 
-.refund-leftColumn: {
-    flex: 2,
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
+.refund-leftColumn {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.refund-rightColumn: {
-    flex: 1.5,
+.refund-rightColumn {
+    flex: 1.5;
 }
 
-.refund-card: {
-    backgroundColor: "#ffffff",
-    borderRadius: "12px",
-    padding: "16px 18px",
-    boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)",
-    border: "1px solid #E5E7EB",
+.refund-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    border: 1px solid #E5E7EB;
 }
 
-.refund-cardTitle: {
-    fontSize: "16px",
-    fontWeight: 600,
-    marginBottom: "12px",
+.refund-cardTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
-.refund-balanceText: {
-    fontSize: "14px",
-    marginBottom: "4px",
+.refund-balanceText {
+    font-size: 14px;
+    margin-bottom: 4px;
 }
 
-.refund-helperText: {
-    fontSize: "12px",
-    color: "#6B7280",
-    marginTop: "4px",
+.refund-helperText {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 4px;
 }
 
-.refund-form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    marginTop: "4px",
+.refund-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
 }
 
-.refund-label: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-    fontSize: "13px",
-    fontWeight: 500,
+.refund-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.refund-input: {
-    borderRadius: "8px",
-    border: "1px solid #D1D5DB",
-    padding: "8px 10px",
-    fontSize: "13px",
-    outline: "none",
+.refund-input {
+    border-radius: 8px;
+    border: 1px solid #D1D5DB;
+    padding: 8px 10px;
+    font-size: 13px;
+    outline: none;
 }
 
-.refund-textarea: {
-    borderRadius: "8px",
-    border: "1px solid #D1D5DB",
-    padding: "8px 10px",
-    fontSize: "13px",
-    resize: "vertical",
-    minHeight: "70px",
-    outline: "none",
+.refund-textarea {
+    border-radius: 8px;
+    border: 1px solid #D1D5DB;
+    padding: 8px 10px;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 70px;
+    outline: none;
 }
 
-.refund-amountRow: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
+.refund-amountRow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
-.refund-smallButton: {
-    padding: "6px 10px",
-    fontSize: "12px",
-    borderRadius: "999px",
-    border: "1px solid #D1D5DB",
-    backgroundColor: "#F3F4F6",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
+.refund-smallButton {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 999px;
+    border: 1px solid #D1D5DB;
+    background-color: #F3F4F6;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
-.refund-fieldGroup: {
-    display: "flex",
-    gap: "8px",
+.refund-fieldGroup {
+    display: flex;
+    gap: 8px;
 }
 
-.refund-noticeText: {
-    fontSize: "12px",
-    color: "#6B7280",
-    lineHeight: 1.5,
-    marginTop: "4px",
+.refund-noticeText {
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-top: 4px;
 }
 
-.refund-errorText: {
-    fontSize: "12px",
-    color: "#DC2626",
-    marginTop: "4px",
+.refund-errorText {
+    font-size: 12px;
+    color: #DC2626;
+    margin-top: 4px;
 }
 
-.refund-successText: {
-    fontSize: "12px",
-    color: "#16A34A",
-    marginTop: "4px",
+.refund-successText {
+    font-size: 12px;
+    color: #16A34A;
+    margin-top: 4px;
 }
 
-.refund-submitButton: {
-    marginTop: "4px",
-    padding: "10px 12px",
-    fontSize: "14px",
-    fontWeight: 600,
-    borderRadius: "999px",
-    border: "none",
-    backgroundColor: "#2563EB",
-    color: "#ffffff",
-    cursor: "pointer",
+.refund-submitButton {
+    margin-top: 4px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: none;
+    background-color: #2563EB;
+    color: #ffffff;
+    cursor: pointer;
 }
 
-.refund-submitButtonDisabled: {
-    opacity: 0.5,
-    cursor: "not-allowed",
+.refund-submitButtonDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.refund-tableWrapper: {
-    marginTop: "4px",
-    maxHeight: "360px",
-    overflow: "auto",
+.refund-tableWrapper {
+    margin-top: 4px;
+    max-height: 360px;
+    overflow: auto;
 }
 
-.refund-table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    fontSize: "12px",
+.refund-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
 }
 
-.refund-th: {
-    textAlign: "left",
-    padding: "6px 4px",
-    borderBottom: "1px solid #E5E7EB",
-    backgroundColor: "#F9FAFB",
-    position: "sticky",
-    top: 0,
-    zIndex: 1,
+.refund-th {
+    text-align: left;
+    padding: 6px 4px;
+    border-bottom: 1px solid #E5E7EB;
+    background-color: #F9FAFB;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
-.refund-td: {
-    padding: "6px 4px",
-    borderBottom: "1px solid #F3F4F6",
-    verticalAlign: "top",
+.refund-td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: top;
 }
 
-.refund-reasonCell: {
-    display: "inline-block",
-    maxWidth: "220px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+.refund-reasonCell {
+    display: inline-block;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
