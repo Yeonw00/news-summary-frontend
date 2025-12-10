@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 
 function formatNumber(value) {
@@ -43,7 +43,7 @@ function CoinRefundPage() {
     }, [loadData]);
 
     const handleSubmit = async (e) => {
-        e.preventDefualt();
+        e.preventDefault();
         setError("");
         setSuccessMessage("");
 
@@ -56,6 +56,14 @@ function CoinRefundPage() {
             setError("환불 사유를 입력해주세요.");
             return;
         }
+
+        const selectedOrder = orders.find((o) => o.id === selectedId);
+        if (!selectedOrder) {
+            setError("선택한 결제건을 찾을 수 없습니다.");
+            return;
+        }
+
+        const orderUid = selectedOrder.orderUid;
 
         setIsSubmitting(true);
         try {
@@ -166,7 +174,7 @@ function CoinRefundPage() {
                                 />
                             </label>
 
-                            <p sclassName="refund-noticeText">
+                            <p className="refund-noticeText">
                                 · 선택한 결제건의 전체 금액이 Toss 결제 취소로 환불됩니다.
                                 <br />
                                 · 해당 결제건에서 코인이 한 번이라도 사용된 경우 환불이 불가능합니다.
@@ -181,10 +189,9 @@ function CoinRefundPage() {
 
                             <button
                                 type="submit"
-                                className= {{
-                                    ...refund-submitButton,
-                                    ...(isSubmitting ? refund-submitButtonDisabled : {}),
-                                }}
+                                className= {
+                                    `refund-submitButton ${isSubmitting ? "refund-submitButtonDisabled": ""}`
+                                }
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "환불 처리 중..." : "선택한 결제건 환불 신청"}
