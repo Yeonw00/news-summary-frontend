@@ -28,8 +28,13 @@ function CoinRefundPage() {
         setIsLoading(true);
         setError("");
         try {
-            const wallet = await apiFetch("/api/wallet/me", { method: "GET" });
+            const [wallet, refundableOrders] = await Promise.all([
+                apiFetch("/api/wallet/me", { method: "GET" }),
+                apiFetch("/api/payments/refundable", { method: "GET" }),
+            ]); 
+            
             setBalance(wallet?.balance ?? 0);
+            setOrders(Array.isArray(refundableOrders) ? refundableOrders : []);
         } catch (e) {
             console.error(e);
             setError("데이터를 불러오는 중 오류가 발생했습니다.");
