@@ -9,30 +9,25 @@ const TYPE_OPTIONS = [
   { value: "SIGNUP_BONUS", label: "가입 보너스" },
 ];
 
-function formatDelta(type, amount) {
+function formatDelta(draftType, amount) {
     if (amount == null) return "-";
 
-    let signed = amount;
-
-    if (type ==="USE") {
-        signed = -Math.abs(amount);
-    } else {
-        signed = Math.abs(amount);
-    }
-
-  const prefix = signed > 0 ? "+" : "";
-  return `${prefix}${signed.toLocaleString()} 코인`;
+    const signed = draftType === "USE" ? -Math.abs(amount) : Math.abs(amount);
+    const prefix = signed > 0 ? "+" : "";
+    return `${prefix}${signed.toLocaleString()} 코인`;
 }
 
 function CoinHistoryPage() {
     const [items, setItems] = useState([]);
-    const [type, setType] = useState("");
-    const [from, setFrom] = useState("");
-    const [to, setTo] = useState("");
+    const [draftType, setDraftType] = useState("");
+    const [draftFrom, setDraftFrom] = useState("");
+    const [draftTo, setDraftTo] = useState("");
+    const [query, setQuery] = useState({ type: "", from: "", to: ""});
     const [page, setPage] = useState(0);
     const [size] = useState(20);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [buttonOn, setButtonOn] = useState(false);
 
     const loadData = useCallback ( async (pageToLoad = 0) => {
         setLoading(true);
@@ -40,9 +35,9 @@ function CoinHistoryPage() {
             const params = new URLSearchParams();
             params.set("page", pageToLoad);
             params.set("size", size);
-            if (type) params.set("type", type);
-            if (from) params.set("from", from);
-            if (to) params.set("to", to);
+            if (query.type) params.set("type", query.type);
+            if (query.from) params.set("from", query.from);
+            if (query.to) params.set("to", query.to);
 
             const data = await apiFetch(`/api/wallet/ledger?` + params.toString(), {
                 method: "GET",
@@ -58,14 +53,15 @@ function CoinHistoryPage() {
         } finally {
             setLoading(false);
         }
-    }, [type, from, to, size]);
+    }, [query, size]);
 
     useEffect(() => {
         loadData(0);
     }, [loadData]);
 
     const handleSearch = () => {
-        loadData(0);
+        setQuery({ type: draftType, from: draftFrom, to: draftTo });
+        setButtonOn(true);
     };
 
     const handlePageChange =(newPage) => {
@@ -76,9 +72,9 @@ function CoinHistoryPage() {
     const downloadLedger = async (format) => {
         try {
             const params = new URLSearchParams();
-            if (type) params.set("type", type);
-            if (from) params.set("from", from);
-            if (to) params.set("to", to);
+            if (query.type) params.set("type", query.type);
+            if (query.from) params.set("from", query.from);
+            if (query.to) params.set("to", query.to);
             params.set("format", format); // EXCEL or PDF
 
             const url = `/api/wallet/ledger/export?${params.toString()}`;
@@ -117,7 +113,7 @@ function CoinHistoryPage() {
             <div className="filters">
                 <label>
                     유형:
-                    <select value={type} onChange={(e) => setType(e.target.value)}>
+                    <select value={draftType} onChange={(e) => setDraftType(e.target.value)}>
                         {TYPE_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
@@ -127,16 +123,16 @@ function CoinHistoryPage() {
                     시작일:
                     <input 
                         type="date"
-                        value={from}
-                        onChange={(e) => setFrom(e.target.value)}
+                        value={draftFrom}
+                        onChange={(e) => setDraftFrom(e.target.value)}
                     />
                 </label>
                 <label>
                     종료일:
                     <input 
                         type="date"
-                        value={to}
-                        onChange={(e) => setTo(e.target.value)}
+                        value={draftTo}
+                        onChange={(e) => setDraftTo(e.target.value)}
                     />
                 </label>
                 <button className="btn-primary" onClick={handleSearch} disabled={loading}>
@@ -149,7 +145,7 @@ function CoinHistoryPage() {
                 <p>불러오는 중...</p>
             ) : items.length === 0? (
                 <p>코인 사용 내역이 없습니다.</p>
-            ) : (
+            ) : buttonOn && (
                 <table className="coin-table">
                     <thead>
                         <tr>
@@ -158,7 +154,6 @@ function CoinHistoryPage() {
                             <th>코인 변화</th>
                             <th>잔액</th>
                             <th>설명</th>
-                            <th>주문번호</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -169,7 +164,6 @@ function CoinHistoryPage() {
                                 <td>{formatDelta(row.type, row.amount)}</td>
                                 <td>{(row.balanceAfter ?? 0).toLocaleString()}</td>
                                 <td>{row.description}</td>
-                                <td>{row.orderId ?? "-"}</td>
                             </tr>
                         ))}
                     </tbody>
