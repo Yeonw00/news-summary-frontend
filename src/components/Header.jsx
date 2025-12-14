@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import "../.css";
 import { User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { apiFetch } from "../api/client";
 import { GiTwoCoins } from "react-icons/gi";
 
 function Header() {
@@ -57,6 +56,9 @@ function Header() {
                             </button>
                             <button onClick={() => { navigate("/coins/history"); setMenuOpen(false)}}> 
                                 코인 사용 내역
+                            </button>
+                            <button onClick={() => {navigate("/coins/refund"); setMenuOpen(false)}}>
+                                코인 환불
                             </button>
                         </div>
                     )}

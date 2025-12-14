@@ -126,7 +126,6 @@ function CoinRefundPage() {
                                     <tr>
                                         <th className="refund-th">선택</th>
                                         <th className="refund-th">결제일시</th>
-                                        <th className="refund-th">상품명</th>
                                         <th className="refund-th">충전 코인</th>
                                         <th className="refund-th">결제 금액</th>
                                     </tr>
@@ -143,7 +142,6 @@ function CoinRefundPage() {
                                             />
                                         </td>
                                         <td className="refund-td">{formatDate(o.paidAt)}</td>
-                                        <td className="refund-td">{o.productName ?? "-"}</td>
                                         <td className="refund-td">
                                         {o.chargedCoins != null
                                             ? `${formatNumber(o.chargedCoins)} 코인`
