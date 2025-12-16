@@ -68,11 +68,11 @@ function CoinRefundPage() {
             return;
         }
 
-        const orderUid = selectedOrder.orderUid;
+        const paymentKey = selectedOrder.orderUid;
 
         setIsSubmitting(true);
         try {
-            await apiFetch(`/api/wallet/refund/${orderUid}`, {
+            await apiFetch(`/api/payments/refund/${paymentKey}`, {
                 method: "POST",
                 body: JSON.stringify({ reason: reason.trim() }),
             });
