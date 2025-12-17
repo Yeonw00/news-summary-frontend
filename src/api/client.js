@@ -1,5 +1,11 @@
 const API_BASE = process.env.REACT_APP_API_BASE ?? "";
 
+function withBaseUrl(inputUrl) {
+    if(/^https?:\/\//i.test(inputUrl)) return inputUrl;
+
+    return `${API_BASE}${inputUrl.startsWith("/") ? "" : "/"}${inputUrl}`;
+}
+
 export async function apiFetch(path, options = {}) {
     const token = localStorage.getItem("token");
     const headers = {
@@ -74,10 +80,9 @@ export async function apiFetchText(url, options = {}) {
         ...(token ? { Authorization: `Bearer ${token}` }: {}),
     };
 
-    const res = await fetch(url, {
+    const res = await fetch(withBaseUrl(url), {
         ...options,
         headers,
-        credentials: "include",
     });
 
     if(!res.ok) {
