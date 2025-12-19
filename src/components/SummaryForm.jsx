@@ -8,6 +8,8 @@ function SummaryForm({ onSummarized }) {
     const [url, setUrl] = useState('');
     const [content, setContent] = useState('');
     const [summary, setSummary] = useState('');
+    const [loading, setLoading] = useState(false);
+    const requestId = crypto.randomUUID();
 
     const handleSubmit = async () => {
         if(!url?.trim() && !content?.trim()) {
@@ -15,17 +17,23 @@ function SummaryForm({ onSummarized }) {
             return;
         }
 
+        if (loading) return;
+        setLoading(true);
+
         try {
             setSummary("");
 
             const text = await apiFetchText("/api/summary/openai", {
                 method: "POST",
+                headers: { "X-Request-Id": requestId },
                 body: JSON.stringify({
                     originalUrl: url,
                     originalContent: content,
                 }),
             });
             setSummary(text ?? "");
+            setUrl("");
+            setContent("");
 
             if (onSummarized) onSummarized();
 
@@ -33,6 +41,8 @@ function SummaryForm({ onSummarized }) {
         } catch (err) {
             console.error("요약 실패:", err);
             setSummary("요약 생성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -65,8 +75,8 @@ function SummaryForm({ onSummarized }) {
                 />
             </div>
 
-            <button className="summary-button" onClick={handleSubmit}>
-                Go
+            <button className="summary-button" onClick={handleSubmit} disabled={loading}>
+                {loading ? "Loading..." : "Go"}
             </button>
 
             {summary && (
