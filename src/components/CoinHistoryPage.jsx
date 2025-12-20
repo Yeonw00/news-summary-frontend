@@ -77,7 +77,7 @@ function CoinHistoryPage() {
             if (query.to) params.set("to", query.to);
             params.set("format", format); // EXCEL or PDF
 
-            const url = `/api/wallet/ledger/export?${params.toString()}`;
+            const url = `http://localhost:8080/api/wallet/ledger/export?${params.toString()}`;
 
             const res = await fetch(url, {
                 method: "GET",
