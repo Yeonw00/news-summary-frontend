@@ -5,15 +5,27 @@ import { useAuth } from "../context/AuthContext";
 
 function SummaryForm({ onSummarized }) {
     const { refreshBalance } = useAuth();
+
+    const [mode, setMode] = useState("URL");
     const [url, setUrl] = useState('');
     const [content, setContent] = useState('');
     const [summary, setSummary] = useState('');
     const [loading, setLoading] = useState(false);
-    const requestId = crypto.randomUUID();
+    
 
     const handleSubmit = async () => {
-        if(!url?.trim() && !content?.trim()) {
-            alert("URL 또는 본문을 입력하세요.");
+        if (!mode) {
+            alert("URL 또는 본문 중 하나를 선택하세요.");
+            return;
+        }
+
+        if (mode ==="URL" && !url.trim()) {
+            alert("URL을 입력하세요.");
+            return;
+        }
+
+        if (mode === "CONTENT" && !content.trim()) {
+            alert("본문을 입력하세요.");
             return;
         }
 
@@ -23,17 +35,22 @@ function SummaryForm({ onSummarized }) {
         try {
             setSummary("");
 
+            const requestId = crypto.randomUUID();
+
+            const payload =
+                mode === "URL"
+                ? {originalUrl: url.trim()}
+                : {originalContent: content.trim()};
+
             const text = await apiFetchText("/api/summary/openai", {
                 method: "POST",
                 headers: { "X-Request-Id": requestId },
-                body: JSON.stringify({
-                    originalUrl: url,
-                    originalContent: content,
-                }),
+                body: JSON.stringify(payload),
             });
             setSummary(text ?? "");
             setUrl("");
             setContent("");
+            setMode("URL");
 
             if (onSummarized) onSummarized();
 
@@ -49,15 +66,44 @@ function SummaryForm({ onSummarized }) {
         <div className="summary-container">
             <h1 className="summary-title">뉴스 요약기</h1>
             <br />
+            <div className="summary-group" style={{ marginBottom: 12 }}>
+                <label style={{ marginRight: 16 }}>
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="URL"
+                        checked={mode === "URL"}
+                        disabled={loading}
+                        onChange={() => {
+                            setMode("URL");
+                            setContent("");
+                        }}
+                    />
+                    URL로 요약
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="CONTENT"
+                        checked={mode === "CONTENT"}
+                        disabled={loading}
+                        onChange={() => {
+                            setMode("CONTENT");
+                            setUrl("");
+                        }}
+                    />
+                    본문 직접 입력
+                </label>
+            </div>
             <div className="summary-group">
                 <label className="summary-label">URL</label>
                 <input
                     type="text"
                     value={url}
-                    onChange={(e) => {
-                    setUrl(e.target.value);
-                    setContent('');
-                    }}
+                    disabled={mode !== "URL" || loading}
+                    onChange={(e) => setUrl(e.target.value)}
                     style={{ width: '100%', marginBottom: 10}}
                 />
             </div>
@@ -67,15 +113,13 @@ function SummaryForm({ onSummarized }) {
                 <textarea
                     rows="6"
                     value={content}
-                    onChange={(e) => {
-                    setContent(e.target.value);
-                    setUrl('');
-                    }}
+                    disabled={mode !== "CONTENT" || loading}
+                    onChange={(e) => setContent(e.target.value)}
                     style={{ width: '100%', marginBottom: 10}}
                 />
             </div>
 
-            <button className="summary-button" onClick={handleSubmit} disabled={loading}>
+            <button className="summary-button" onClick={handleSubmit} disabled={loading || !mode}>
                 {loading ? "Loading..." : "Go"}
             </button>
 
