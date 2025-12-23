@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useEffect  } from "react";
 import SummaryItem from "./SummaryItem";
 import { apiFetch } from "../api/client";
+import { Plus, Search } from "lucide-react";
 
 function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView }) {
     const [isOpen, setIsOpen] = useState(true);
@@ -68,10 +69,22 @@ function Sidebar({ summaries, fetchSummaryList, selectedView, setSelectedView })
                         <nav>
                             <ul>
                                 <li >
-                                    <button onClick={() => navigate('/summary')}>새 요약</button>
+                                    <button 
+                                        className="sidebar-btn" 
+                                        onClick={() => navigate('/summary')}
+                                    >
+                                        <Plus size={18} />
+                                        새 요약
+                                    </button>
                                 </li>
                                 <li>
-                                    <button onClick={() => setSelectedView("search")}>기사 검색</button>
+                                    <button 
+                                        className="sidebar-btn" 
+                                        onClick={() => setSelectedView("search")}
+                                    >
+                                        <Search size={18} />
+                                        기사 검색
+                                    </button>
                                 </li>
                             </ul>
                         </nav>
