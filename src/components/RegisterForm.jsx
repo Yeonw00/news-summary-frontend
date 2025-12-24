@@ -1,10 +1,13 @@
-import {useState} from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email,setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const [success, setSuccess] = useState(false);
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -28,6 +31,7 @@ function RegisterForm() {
                 setUsername("");
                 setPassword("");
                 setEmail("");
+                setSuccess(true);
             } else {
                 const data = await response.text();
                 setMessage(`회원가입 실패: ${data}`);
@@ -66,8 +70,16 @@ function RegisterForm() {
                 />
                 <br />
                 <button className="form-button" type="submit">회원가입</button>
+                {success &&(
+                    <div style={{ marginTop: 12}}>
+                        <p>{message}</p>
+                        <br />
+                        <button className="form-button" onClick={() => navigate("/")}>
+                            main 화면으로
+                        </button>
+                    </div>
+                )}
             </form>
-            <p>{message}</p>
         </div>
     );
 }
