@@ -642,11 +642,6 @@ html, body, #root {
   text-align: center;
 }
 
-/* 설명은 왼쪽 정렬 */
-.coin-table td:nth-child(5) {
-  text-align: left;
-}
-
 /* 홀수/짝수 줄 줄무늬 */
 .coin-table tbody tr:nth-child(odd) {
   background-color: #fafafa;
