@@ -45,6 +45,8 @@ export const AuthProvider = ({children}) => {
                 localStorage.setItem("user", JSON.stringify(data.user));
                 
                 await refreshBalance();
+
+                console.log(JSON.parse(localStorage.getItem("user")));
             } else {
                 doLogoutSilent();
             }

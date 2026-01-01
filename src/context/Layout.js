@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -22,12 +22,17 @@ import ChargeSuccess from "../pages/ChargeSuccess";
 import ChargeFail from "../pages/ChargeFail";
 import CoinHistoryPage from "../components/CoinHistoryPage";
 import CoinRefundPage from "../components/CoinRefundPage";
-
+import AdminRoute from "../components/admin/AdminRoute";
+import AdminLayout from "../components/admin/AdminLayout";
+import AdminUsersPage from "../components/admin/AdminUsersPage";
 
 function Layout() {
   const { isLoggedIn, isChecking } = useAuth();
   const [selectedView, setSelectedView] = useState("summary");
   const [summaries, setSummaries] = useState([]);
+
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
 
   const fetchSummaryList = useCallback(async () => {
     try {
@@ -52,12 +57,12 @@ function Layout() {
   return(
     <div className="page-wrapper">
       <div className="app-container">
-        {isLoggedIn && (
+        {isLoggedIn && !isAdminPath && (
           <Sidebar summaries={summaries} fetchSummaryList={fetchSummaryList} selectedView={selectedView} setSelectedView={setSelectedView} /> 
         )}
         <div className="main-section">
-          {isLoggedIn && <Header />}
-          {selectedView === "search" && <ArticleSearch selectedView={selectedView} setSelectedView={setSelectedView} />}
+          {isLoggedIn && !isAdminPath && <Header />}
+          {!isAdminPath && selectedView === "search" && <ArticleSearch selectedView={selectedView} setSelectedView={setSelectedView} />}
           <Routes>
             <Route path="/" 
               element={
@@ -109,6 +114,12 @@ function Layout() {
                 </ProtectedRoute>
               }
             />
+            <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="users" replace />} />
+                <Route path="users" element={<AdminUsersPage />} />
+              </Route>
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
