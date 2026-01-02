@@ -37,10 +37,11 @@ function AdminUsersPage() {
                 <tbody>
                     {rows.map((u) => (
                         <tr key={u.id}>
+                            <td>{u.id}</td>
                             <td>{u.email}</td>
                             <td>{u.username}</td>
                             <td>{u.role}</td>
-                            <td>{u.password ? "Y" : "N"}</td>
+                            <td>{u.socialLogin ? "Y" : "N"}</td>
                             <td style={{ textAlign: "right" }}>{u.coinBalance}</td>
                             <td>{u.createdAt}</td>
                         </tr>

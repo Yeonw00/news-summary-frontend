@@ -7,6 +7,7 @@ function AdminLayout() {
             <AdminSidebar />
             <main style={{ flex: 1, padding: 24 }}>
                 <h1>ADMIN LAYOUT</h1>
+                <br />
                 <Outlet />
             </main>    
         </div>
