@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function LoginForm() {
-    const { login } = useAuth();
+    const { refresh } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -26,12 +26,11 @@ function LoginForm() {
             if(response.ok) {
                 const data = await response.json();
 
-                await login(
-                    data.user,
-                    data.token
-                );
-
-                navigate("/summary");
+                const token = data.token;
+                localStorage.setItem("token", token);
+                
+                await refresh();
+                navigate("/", { replace: true });
             } else {
                 const data = await response.json();
                 setMessage(`로그인 실패: ${data.message}`);

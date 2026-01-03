@@ -27,7 +27,7 @@ import AdminLayout from "../components/admin/AdminLayout";
 import AdminUsersPage from "../components/admin/AdminUsersPage";
 
 function Layout() {
-  const { isLoggedIn, isChecking } = useAuth();
+  const { isLoggedIn, isChecking, currentUser } = useAuth();
   const [selectedView, setSelectedView] = useState("summary");
   const [summaries, setSummaries] = useState([]);
 
@@ -48,9 +48,10 @@ function Layout() {
   
   useEffect(() => {
     if(isLoggedIn) {
+      console.log("isLoggedIn=", isLoggedIn, "currentUser=", currentUser);
       fetchSummaryList();
     }
-  }, [isLoggedIn, fetchSummaryList]);
+  }, [isLoggedIn, fetchSummaryList, currentUser]);
   
   if (isChecking) return null;
 
@@ -61,13 +62,19 @@ function Layout() {
           <Sidebar summaries={summaries} fetchSummaryList={fetchSummaryList} selectedView={selectedView} setSelectedView={setSelectedView} /> 
         )}
         <div className="main-section">
-          {isLoggedIn && !isAdminPath && <Header />}
+          {isLoggedIn && <Header />}
           {!isAdminPath && selectedView === "search" && <ArticleSearch selectedView={selectedView} setSelectedView={setSelectedView} />}
           <Routes>
             <Route path="/" 
               element={
                 isLoggedIn ? (
-                  <Navigate to="/summary" />
+                  !currentUser?(
+                    null
+                  ) : currentUser.role === "ADMIN" ? (
+                    <Navigate to="/admin/users" replace />
+                  ) :(
+                    <Navigate to="/summary" replace/>
+                  )
                 ) : (
                   <Home />
                 )

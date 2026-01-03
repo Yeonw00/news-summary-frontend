@@ -103,7 +103,7 @@ export const AuthProvider = ({children}) => {
             logout,
             balance,
             refreshBalance, 
-            refresh: checkLogin
+            refresh: checkLogin,
         }),
         [isLoggedIn, currentUser, isChecking, login, logout, checkLogin, balance, refreshBalance]
     );
