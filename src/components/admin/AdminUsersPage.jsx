@@ -9,7 +9,8 @@ function AdminUsersPage() {
         (async () => {
             try {
                 const data = await apiFetch("/api/admin/users", {method: "GET"});
-                setRows(data ?? []);
+                const list = Array.isArray(data) ? data : (data.content ?? []);
+                setRows(list);
             } catch (e) {
                 setError(e.message || "불러오기 실패");
             }
