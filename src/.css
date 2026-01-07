@@ -847,3 +847,68 @@ html, body, #root {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.admin-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  margin-bottom: 12px;
+
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* select / input 공통 */
+.admin-filterbar select,
+.admin-filterbar input[type="text"],
+.admin-filterbar__reset{
+  height: 38px;
+  padding: 0 10px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-sizing: border-box;
+
+  font-size: 14px;
+  outline: none;
+}
+
+/* 포커스 시 */
+.admin-filterbar select:focus,
+.admin-filterbar input[type="text"]:focus {
+  border-color: #bdbdbd;
+}
+
+/* 초기화 버튼 */
+.admin-filterbar__reset {
+  padding: 0 10px;
+  line-height: 36px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f7f7f7;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.admin-filterbar__reset:hover {
+  background: #f0f0f0;
+}
+
+/* 총 인원 */
+.admin-filterbar__count {
+  margin-left: auto; /* 오른쪽 끝으로 */
+  font-size: 14px;
+  color: #444;
+}
+
+.admin-filterbar__count b {
+  font-weight: 700;
+}
+
+
