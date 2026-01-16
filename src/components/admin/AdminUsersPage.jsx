@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from 'react-router-dom';
 import { apiFetch } from "../../api/client";
 
 const PAGE_SIZE = 20;
@@ -144,7 +145,11 @@ function AdminUsersPage() {
                         <tr key={u.id}>
                             <td>{u.id}</td>
                             <td>{u.email}</td>
-                            <td>{u.userName ?? u.username}</td>
+                            <td>
+                                <Link to={`/admin/users/${user.userId}`} className="user-link">
+                                    {u.userName ?? u.username}
+                                </Link>
+                            </td>
                             <td>{u.role}</td>
                             <td>{u.socialLogin ? "Y" : "N"}</td>
                             <td style={{ textAlign: "right" }}>{u.coinBalance}</td>
