@@ -7,6 +7,10 @@ function AdminUserPageDetail() {
     const [userData, setUserData] = useState(null);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    
+    const [summaries, setSummaries] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
        const fetchUserData = async () => {
@@ -27,9 +31,26 @@ function AdminUserPageDetail() {
         }
     }), [userId];
 
+    useEffect(() => {
+        fetchSummaries(0);
+    }, [userId])
+
     if (isLoading) return <div>데이터를 불러오는 중...</div>
     if (error) return <div style={{ color: "red" }}></div>
     if (!userData) return <div>사용자 정보가 없습니다.</div>
+
+    const fetchSummaries = async (page) => {
+        try {
+            const data = await apiFetch(`/api/admin/users/${userId}/summaries?page=${page}&size=10`, {
+                method: "GET"
+            });
+            setSummaries(data.content);
+            setTotalPages(data.totalPages);
+            setCurrentPage(data.number);
+        } catch (e) {
+            console.error("요약 이력 로드 실패:", e);
+        }
+    };
 
     return (
         <div>
@@ -65,6 +86,46 @@ function AdminUserPageDetail() {
 
             <div style={{ marginTop: '40px' }}>
                 <h3>요약 요청 이력</h3>
+                <table className="coin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>뉴스 제목</th>
+                            <th>요약 일시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {summaries.length > 0 ? (
+                            summaries.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td style={{ textAlign: 'left'}}>{item.title}</td>
+                                    <td>{new Date(item.savedAt).toLocaleString()}</td>
+                                </tr>
+                            ))
+                        ): (
+                            <tr>
+                                <td colSpan="3">요약 기록이 없습니다.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+
+                <div style={{ display: "flex", gap: 8, marginTop: 12, alignItems: "center" }}>
+                    <button
+                        onClick={() => fetchSummaries(currentpage - 1)}
+                        disabled={currentpage === 0}
+                    >
+                        이전
+                    </button>
+                    <span>{currentPage + 1 }/{totalPages}</span>
+                    <button
+                        onClick={() => fetchSummaries(currentPage + 1)} 
+                        disabled={currentPage + 1 >= totalPages}
+                    >
+                        다음
+                    </button>
+                </div>
             </div>
         </div>
     );
