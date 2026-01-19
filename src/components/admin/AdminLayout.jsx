@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminRoute from "./AdminRoute";
-import AdminUsersPage from "./AdminUserSPage";
+import AdminUsersPage from "./AdminUsersPage";
 import AdminUserPageDetail from "./AdminUserPageDetail";
 
 function AdminLayout() {

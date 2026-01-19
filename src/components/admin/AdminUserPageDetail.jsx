@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../api/client";
 import { useParams } from "react-router-dom";
 
@@ -11,6 +11,19 @@ function AdminUserPageDetail() {
     const [summaries, setSummaries] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+
+    const fetchSummaries = useCallback(async (page) => {
+        try {
+            const data = await apiFetch(`/api/admin/users/${userId}/summaries?page=${page}&size=10`, {
+                method: "GET"
+            });
+            setSummaries(data.content);
+            setTotalPages(data.totalPages);
+            setCurrentPage(data.number);
+        } catch (e) {
+            console.error("요약 이력 로드 실패:", e);
+        }
+    },[userId]);
 
     useEffect(() => {
        const fetchUserData = async () => {
@@ -28,29 +41,13 @@ function AdminUserPageDetail() {
         
         if (userId) {
             fetchUserData();
+            fetchSummaries(0);
         }
-    }), [userId];
-
-    useEffect(() => {
-        fetchSummaries(0);
-    }, [userId])
+    }, [userId, fetchSummaries]);
 
     if (isLoading) return <div>데이터를 불러오는 중...</div>
-    if (error) return <div style={{ color: "red" }}></div>
+    if (error) return <div style={{ color: "red" }}>{error}</div>
     if (!userData) return <div>사용자 정보가 없습니다.</div>
-
-    const fetchSummaries = async (page) => {
-        try {
-            const data = await apiFetch(`/api/admin/users/${userId}/summaries?page=${page}&size=10`, {
-                method: "GET"
-            });
-            setSummaries(data.content);
-            setTotalPages(data.totalPages);
-            setCurrentPage(data.number);
-        } catch (e) {
-            console.error("요약 이력 로드 실패:", e);
-        }
-    };
 
     return (
         <div>
@@ -78,7 +75,7 @@ function AdminUserPageDetail() {
                         <td>{userData.totalSummaryCount}회</td>
                         <td>{userData.successCount}회</td>
                         <td>{userData.totalSpentBalance?.toLocaleString()}개</td>
-                        <td>{new Date(userData.createdAt).toLocaleDateString}</td>
+                        <td>{new Date(userData.createdAt).toLocaleDateString()}</td>
                         <td>{userData.lastActivityAt ? new Date(userData.lastActivityAt).toLocaleString() : "기록 없음"}</td>
                     </tr>
                 </tbody>
@@ -113,8 +110,8 @@ function AdminUserPageDetail() {
 
                 <div style={{ display: "flex", gap: 8, marginTop: 12, alignItems: "center" }}>
                     <button
-                        onClick={() => fetchSummaries(currentpage - 1)}
-                        disabled={currentpage === 0}
+                        onClick={() => fetchSummaries(currentPage - 1)}
+                        disabled={currentPage === 0}
                     >
                         이전
                     </button>

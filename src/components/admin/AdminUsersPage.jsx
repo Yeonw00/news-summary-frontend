@@ -146,7 +146,7 @@ function AdminUsersPage() {
                             <td>{u.id}</td>
                             <td>{u.email}</td>
                             <td>
-                                <Link to={`/admin/users/${user.userId}`} className="user-link">
+                                <Link to={`/admin/users/${u.id}`} className="user-link">
                                     {u.userName ?? u.username}
                                 </Link>
                             </td>
