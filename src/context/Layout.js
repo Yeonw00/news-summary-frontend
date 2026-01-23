@@ -25,6 +25,7 @@ import CoinRefundPage from "../components/CoinRefundPage";
 import AdminRoute from "../components/admin/AdminRoute";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminUsersPage from "../components/admin/AdminUsersPage";
+import AdminUserPageDetail from "../components/admin/AdminUserPageDetail";
 
 function Layout() {
   const { isLoggedIn, isChecking, currentUser } = useAuth();
@@ -122,9 +123,10 @@ function Layout() {
               }
             />
             <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Navigate to="users" replace />} />
                 <Route path="users" element={<AdminUsersPage />} />
+                <Route path="users/:userId" element={<AdminUserPageDetail />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
