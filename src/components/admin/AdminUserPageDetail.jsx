@@ -17,9 +17,9 @@ function AdminUserPageDetail() {
             const data = await apiFetch(`/api/admin/users/${userId}/summaries?page=${page}&size=10`, {
                 method: "GET"
             });
-            setSummaries(data.content);
-            setTotalPages(data.totalPages);
-            setCurrentPage(data.number);
+            setSummaries(data.content || []);
+            setTotalPages(data.totalPages ?? 0);
+            setCurrentPage(data.number ?? 0);
         } catch (e) {
             console.error("요약 이력 로드 실패:", e);
         }
@@ -72,7 +72,7 @@ function AdminUserPageDetail() {
                         <td>{userData.email}</td>
                         <td>{userData.username}</td>
                         <td>{userData.coinBalance?.toLocaleString()}개</td>
-                        <td>{userData.totalSummaryCount}회</td>
+                        <td>{userData.totalRequestCount}회</td>
                         <td>{userData.successCount}회</td>
                         <td>{userData.totalSpentBalance?.toLocaleString()}개</td>
                         <td>{new Date(userData.createdAt).toLocaleDateString()}</td>
