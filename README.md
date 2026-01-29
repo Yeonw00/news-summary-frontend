@@ -1,6 +1,3 @@
-### 2. Frontend Repository: `news-summary-frontend`
-
-```markdown
 # AI News Summary Service - Frontend UI
 
 Frontend UI for AI News Summary Service, built with React and React Router.
