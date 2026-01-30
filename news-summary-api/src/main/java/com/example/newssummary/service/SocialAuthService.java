@@ -99,6 +99,11 @@ public class SocialAuthService {
 	@Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
 	private String kakaoUserInfoUrl;
 	
+	// 토큰 만료 시간 설정
+	private final Duration REFRESH_TOKEN_TTL = Duration.ofDays(7); // 리프레시 토큰 7일
+	private final String RT_PREFIX = "rt:"; // Refresh Token 키 접두사
+	private final String BL_PREFIX = "bl:"; // Blacklist 키 접두사 (로그아웃용)
+	
 	
 	public String getGoogleLoginUrl() {
 		return "https://accounts.google.com/o/oauth2/v2/auth"
@@ -114,7 +119,8 @@ public class SocialAuthService {
 		 // DB 사용자 조회/회원가입 & JWT 발급
 		User user = userService.processGoogleUser(userInfo);
 		String username = user.getUsername();
-		String token = jwtTokenProvider.generateToken(username);
+		
+		String token = issueTokens(username);
 	    
 		return buildFrontendRedirect("google-success", token, username);
 	}
@@ -202,7 +208,9 @@ public class SocialAuthService {
 		User user = userService.processNaverUser(userInfo);
 		
 		String username = user.getUsername();
-		String token = jwtTokenProvider.generateToken(username);
+		
+		String token = issueTokens(username);
+		
 		return buildFrontendRedirect("naver-success", token, username);
 	}
 	
@@ -273,7 +281,9 @@ public class SocialAuthService {
 		User user = userService.processKakaoUser(userInfo);
 		
 		String username = user.getUsername();
-		String token = jwtTokenProvider.generateToken(username);
+		
+		String token = issueTokens(username);
+		
 		return buildFrontendRedirect("kakao-success", token, username);
 	}
 	
@@ -350,5 +360,16 @@ public class SocialAuthService {
 			return true;
 		}
 		return false;
+	}
+	
+	private String issueTokens(String username) {
+	    // 1. Access Token 생성
+	    String accessToken = jwtTokenProvider.generateToken(username);
+	    
+	    // 2. Refresh Token 생성 및 Redis 저장
+	    String refreshToken = UUID.randomUUID().toString();
+	    redis.opsForValue().set(RT_PREFIX + username, refreshToken, REFRESH_TOKEN_TTL);
+	    
+	    return accessToken;
 	}
 }

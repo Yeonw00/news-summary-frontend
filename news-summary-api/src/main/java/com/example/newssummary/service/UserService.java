@@ -1,10 +1,13 @@
 package com.example.newssummary.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +20,7 @@ import com.example.newssummary.dto.SignupRequest;
 import com.example.newssummary.dto.UserLoginRequest;
 import com.example.newssummary.repository.UserBalanceRepository;
 import com.example.newssummary.repository.UserRepository;
+import com.example.newssummary.security.JwtTokenProvider;
 import com.example.newssummary.service.payment.CoinLedgerService;
 
 import jakarta.transaction.Transactional;
@@ -34,6 +38,16 @@ public class UserService {
 	
 	@Autowired
 	private CoinLedgerService coinLedgerService;
+	
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+	
+	@Autowired
+	private StringRedisTemplate redis;
+	
+	private final Duration REFRESH_TOKEN_TTL = Duration.ofDays(7); // 리프레시 토큰 7일
+	private final String RT_PREFIX = "rt:"; // Refresh Token 키 접두사
+	private final String BL_PREFIX = "bl:"; // Blacklist 키 접두사 (로그아웃용)
 	
 	@Transactional
 	public void singup(SignupRequest request) {
@@ -69,6 +83,17 @@ public class UserService {
 			throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
 		}
 		return user;
+	}
+	
+	public String issueTokens(String username) {
+	    // 1. Access Token 생성
+	    String accessToken = jwtTokenProvider.generateToken(username);
+	    
+	    // 2. Refresh Token 생성 및 Redis 저장
+	    String refreshToken = UUID.randomUUID().toString();
+	    redis.opsForValue().set(RT_PREFIX + username, refreshToken, REFRESH_TOKEN_TTL);
+	    
+	    return accessToken;
 	}
 	
 	@Transactional
@@ -194,5 +219,14 @@ public class UserService {
 		
 		// 3.JWT 토큰 생성
 		return user;
+	}
+	
+	public void logout(String accessToken, String username) {
+	    // 1. Redis에서 Refresh Token 삭제
+	    redis.delete(RT_PREFIX + username);
+	    
+	    // 2. Access Token을 블랙리스트에 추가 (남은 만료 시간만큼만 저장)
+	    // 여기서는 간단히 24시간 저장 예시
+	    redis.opsForValue().set(BL_PREFIX + accessToken, "logout", Duration.ofHours(24));
 	}
 }

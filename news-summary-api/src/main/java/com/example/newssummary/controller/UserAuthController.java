@@ -1,7 +1,6 @@
 package com.example.newssummary.controller;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,10 +24,10 @@ import com.example.newssummary.dto.SignupRequest;
 import com.example.newssummary.dto.UserLoginRequest;
 import com.example.newssummary.repository.UserRepository;
 import com.example.newssummary.security.CustomUserDetails;
-import com.example.newssummary.security.JwtTokenProvider;
 import com.example.newssummary.service.SocialAuthService;
 import com.example.newssummary.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -42,8 +42,6 @@ public class UserAuthController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
 	
 	@Autowired
 	private SocialAuthService socialAuthService;
@@ -76,14 +74,17 @@ public class UserAuthController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 		}
 		
-		String token = jwtTokenProvider.generateToken(user.getUsername());
 		
 		user.setLastLoginAt(LocalDateTime.now());
 		userRepository.save(user);
 		
+		String username = user.getUsername();
+		
+		String token = userService.issueTokens(username);
+		
 		Map<String, Object> response = new HashMap<>();
 		response.put("token", token);
-		response.put("username", user.getUsername());
+		response.put("username", username);
 		response.put("email", user.getEmail());
 		response.put("role", user.getRole());
 		
@@ -91,7 +92,13 @@ public class UserAuthController {
 	}
 	
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout() {
+	public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+		// 1. Header에서 토큰 추출 ("Bearer " 제거)
+	    String authHeader = request.getHeader("Authorization");
+	    String accessToken = authHeader.substring(7);
+	    
+	    // 2. 서비스 호출 (Redis 처리)
+	    userService.logout(accessToken, userDetails.getUsername());
 		return ResponseEntity.ok("로그아웃 성공");
 	}
 	
