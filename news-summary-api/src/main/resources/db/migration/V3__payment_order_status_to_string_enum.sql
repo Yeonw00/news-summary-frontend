@@ -1,2 +1,0 @@
-ALTER TABLE payment_order
-	MODIFY COLUMN status VARCHAR(16) NOT NULL;

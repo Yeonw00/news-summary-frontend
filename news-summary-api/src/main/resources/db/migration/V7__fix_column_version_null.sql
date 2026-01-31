@@ -1,2 +1,0 @@
-ALTER TABLE user_balance
-MODIFY COLUMN version BIGINT NULL;
